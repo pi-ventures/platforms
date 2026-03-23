@@ -1,0 +1,21 @@
+{
+  "name": "medicines-discount-scrapers",
+  "version": "1.0.0",
+  "description": "Price scrapers for medicines.discount",
+  "main": "src/scraper-1mg-catalog.js",
+  "scripts": {
+    "catalog": "node src/scraper-1mg-catalog.js",
+    "pharmeasy": "node src/scraper-pharmeasy.js",
+    "apollo": "node src/scraper-apollo.js",
+    "netmeds": "node src/scraper-netmeds.js",
+    "medplus": "node src/scraper-medplus.js",
+    "run-all": "node src/run-all.js"
+  },
+  "dependencies": {
+    "playwright": "^1.44.0",
+    "axios": "^1.7.2",
+    "xml2js": "^0.6.2",
+    "pg": "^8.12.0",
+    "p-queue": "^7.4.1"
+  }
+}

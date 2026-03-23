@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #F5A623;
+  --color-primary-dark: #E8960A;
+  --color-dark: #1A1A2E;
+  --color-darker: #0F0F1A;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #F9F5EC;
+  color: #1A1A2E;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #006D77; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #005a63; }
+
+/* ── Custom Components ── */
+@layer components {
+  .btn-primary {
+    @apply bg-brand-primary text-white font-semibold px-6 py-3 rounded-xl
+           hover:bg-brand-accent transition-all duration-200
+           shadow-mustard hover:shadow-mustard-lg active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-brand-primary border-2 border-brand-primary font-semibold
+           px-6 py-3 rounded-xl hover:bg-brand-light transition-all duration-200;
+  }
+
+  .btn-dark {
+    @apply bg-brand-dark text-white font-semibold px-6 py-3 rounded-xl
+           hover:bg-opacity-90 transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-card p-6 transition-all duration-200
+           hover:shadow-card-hover;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-new        { @apply badge bg-blue-100 text-blue-700; }
+  .badge-contacted  { @apply badge bg-purple-100 text-purple-700; }
+  .badge-site_visit { @apply badge bg-yellow-100 text-yellow-700; }
+  .badge-negotiation{ @apply badge bg-mustard-100 text-mustard-700; }
+  .badge-closed_won { @apply badge bg-green-100 text-green-700; }
+  .badge-closed_lost{ @apply badge bg-red-100 text-red-700; }
+  .badge-active     { @apply badge bg-green-100 text-green-700; }
+  .badge-draft      { @apply badge bg-gray-100 text-gray-600; }
+  .badge-sold       { @apply badge bg-blue-100 text-blue-700; }
+
+  .stat-card {
+    @apply card flex items-start justify-between;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white
+           focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent
+           text-sm transition-all duration-200 placeholder-gray-400;
+  }
+
+  .select {
+    @apply input appearance-none cursor-pointer;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+           text-gray-600 hover:bg-brand-light hover:text-brand-primary
+           transition-all duration-200 cursor-pointer;
+  }
+
+  .sidebar-link.active {
+    @apply bg-brand-primary text-white shadow-mustard;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-brand-dark font-display;
+  }
+
+  .section-subtitle {
+    @apply text-sm text-gray-500 mt-1;
+  }
+
+  .page-header {
+    @apply flex items-center justify-between mb-8;
+  }
+
+  /* Landing page overrides — Zillow-clean white */
+  .landing-page {
+    background: #ffffff !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+  }
+
+  .btn-teal {
+    @apply text-white font-semibold px-6 py-3 rounded-full transition-all duration-200;
+    background: #006D77;
+  }
+  .btn-teal:hover { background: #005a63; }
+
+  .btn-teal-outline {
+    @apply font-semibold px-6 py-3 rounded-full border-2 transition-all duration-200;
+    border-color: #006D77;
+    color: #006D77;
+  }
+  .btn-teal-outline:hover { background: #e6f4f5; }
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-mustard {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,166,35,0.4); }
+  70%       { box-shadow: 0 0 0 8px rgba(245,166,35,0); }
+}
+
+.animate-fade-in   { animation: fadeIn 0.4s ease-out forwards; }
+.animate-slide-in  { animation: slideIn 0.3s ease-out forwards; }
+.animate-pulse-dot { animation: pulse-mustard 2s infinite; }
+
+/* ── Property Card ── */
+.property-card {
+  @apply bg-white rounded-2xl overflow-hidden shadow-card
+         hover:shadow-card-hover transition-all duration-300
+         hover:-translate-y-1 cursor-pointer;
+}
+
+/* ── Lead Kanban ── */
+.kanban-column {
+  @apply bg-gray-50 rounded-2xl p-4 min-h-96 min-w-72 flex-shrink-0;
+}
+
+.kanban-card {
+  @apply bg-white rounded-xl p-4 shadow-sm hover:shadow-card
+         transition-all duration-200 cursor-pointer border border-gray-100;
+}
+
+/* ── Map Container ── */
+.map-container {
+  @apply rounded-2xl overflow-hidden shadow-card;
+  height: 500px;
+}
+
+/* ── Chart Container ── */
+.chart-container {
+  @apply w-full;
+  height: 280px;
+}
