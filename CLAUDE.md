@@ -8,12 +8,14 @@
 
 ## What This Is
 
-A monorepo of 5 interconnected platforms built for the Indian market. Four consumer platforms sync their data into a central wealth hub (MyVault), which aggregates and pushes analytics to KnowledgeHub.ai.
+A monorepo of 6 interconnected platforms built for the Indian market. Four consumer platforms sync their data into a central wealth hub (MyVault), which aggregates and pushes analytics to KnowledgeHub.ai. CuriousHat.ai is a standalone EdTech platform.
 
 ```
 YesBroker ──┐
 TheEquinox ─┼──► MyVault ──► KnowledgeHub.ai
 MyWills ────┘
+
+CuriousHat.ai  (standalone — AI-powered school management + learning)
 ```
 
 ---
@@ -27,6 +29,7 @@ MyWills ────┘
 | `mywills/` | MyWills | 3003 | Legal Navy `#1A2744` + Gold `#C9A84C` + Cream `#F8F6F0` | Will & estate management — Indian Succession Act compliant, legalopinion.co.in partner |
 | `myvault/` | MyVault | 3004 | Jet Black `#0A0A0A` + Gold `#C9A84C` | Central wealth hub — aggregates net worth from all 3 platforms |
 | `medicines-discount/` | MedicinesDiscount | 3008 | — | Medicine price comparison — Next.js UI + FastAPI backend + scrapers |
+| `curioushat/` | CuriousHat.ai | 3005 | Violet `#7C3AED` on White | EdTech platform — AI tutor (Claude + GPT-4o), digital library, school management, 5 role dashboards |
 
 **Empty (reserved):** `iqedge/`, `justbuild/`, `knowledgehub/`
 
@@ -51,6 +54,19 @@ sdk.startAutoSync(async () => { ... }) // background sync every 5 min
 ---
 
 ## Tech Stack Per Project
+
+### curioushat
+- Next.js 14.2, React 18, TypeScript 5, TailwindCSS, Lucide icons
+- Source in `app/` (App Router) — uses route groups `(dashboard)` and `(marketing)`
+- Components in `components/dashboard/` and `components/marketing/`
+- AI: `@anthropic-ai/sdk` (Claude) + `openai` (GPT-4o Vision) — real API at `/api/tutor`
+- **5 role dashboards:** Student, Teacher, Parent, School Admin, Govt/Board
+- **Student:** AI Tutor, Courses, Library (42 NCERT books, 23 Indian languages, 28 boards), Exams, Grades, Timetable
+- **Teacher:** Exam Generator, AI Grader, Question Bank, Gradebook, Attendance, Courses, Library
+- **Parent:** Progress, Attendance, Fees, Messages
+- **School:** Staff, Timetable, Admissions, Fees, Reports
+- **Govt:** Districts, Schools, Subjects, Reports, Alerts
+- Routes: `app/dashboard/[role]/` for all dashboards, `app/(marketing)/` for public pages, `app/(auth)/` for login/signup
 
 ### Next.js platforms (yesbroker, theequinox, mywills, myvault)
 - Next.js 14.2, React 18.3, TypeScript 5.4
@@ -77,6 +93,7 @@ cd yesbroker && npm install && npm run dev      # localhost:3001
 cd theequinox && npm install && npm run dev     # localhost:3002
 cd mywills && npm install && npm run dev        # localhost:3003
 cd myvault && npm install && npm run dev        # localhost:3004
+cd curioushat && npm install && npm run dev    # localhost:3005
 
 # medicines-discount (full stack)
 cd medicines-discount
@@ -110,6 +127,10 @@ NEXT_PUBLIC_MAPS_KEY=your_google_maps_key
 
 # MyWills only
 LEGALOPINION_API_KEY=your_key
+
+# CuriousHat only
+ANTHROPIC_API_KEY=your_key
+OPENAI_API_KEY=your_key
 ```
 
 medicines-discount API uses `.env` at `medicines-discount/apps/api/.env`:
@@ -130,6 +151,7 @@ REDIS_URL=redis://localhost:6379/3
 | mywills | Mock (`mockData.ts`) | Needs real auth + DB |
 | myvault | Mock (`mockData.ts`) | Needs sync engine backend — depends on others |
 | shared/sync-sdk | Typed but no live endpoints | Needs api.myvault.in backend |
+| curioushat | **Real** AI API (`/api/tutor`) — UI uses mock data elsewhere | Needs auth + DB for users, courses, grades |
 
 ---
 

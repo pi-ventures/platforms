@@ -72,6 +72,9 @@ Desktop.ini
 *.tar.gz
 *.rar
 
+# Large data files (voter rolls, PDFs)
+data/telangana_rolls/
+
 # Misc
 .cache/
 .parcel-cache/

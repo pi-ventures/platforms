@@ -1,0 +1,285 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// IQEdge.ai — Cross-Vertical Intelligence Layer
+//
+// Pattern Recognition · Predictive Analytics · Cross-Vertical Insights
+//
+// Receives from ALL verticals:
+//   TheCredit.exchange (finance) · TheEquinox.ai (trading) · YesBroker (real estate)
+//   JustBuild.com (infra) · LegalOpinion (legal) · CuriousHat (education)
+//   MedicinesDiscount (healthcare) · PI Foundation (CSR)
+//
+// Pushes enriched insights to: KnowledgeHub.ai (Master Core)
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INGESTED STUDENT DATA (from CuriousHat)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model StudentSnapshot {
+  id             String   @id @default(cuid())
+  curioushatId   String   // student ID in CuriousHat
+  schoolId       String
+  name           String
+  grade          String
+  section        String
+  board          String
+  category       String?
+  state          String
+  pincode        String
+  scores         Json     // full score array from CuriousHat
+  attendance     Json     // {total, present, absent, percentage}
+  profileCard    Json     // strength map, career recs, etc.
+  entrancePrep   Json?    // entrance exam prep data
+  ingestedAt     DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  analytics      StudentAnalytics?
+  predictions    Prediction[]
+
+  @@unique([curioushatId])
+  @@index([state, board])
+  @@index([grade])
+}
+
+model StudentAnalytics {
+  id                    String   @id @default(cuid())
+  studentSnapshotId     String   @unique
+  performanceTrend      Json     // [{month, avgPercent}]
+  subjectStrength       Json     // {Math: 92, Physics: 87, ...}
+  predictedBoardScore   Float?
+  collegeReadinessScore Float?   // 0-100
+  entranceExamReadiness Json?    // {JEE: 65, NEET: 40}
+  careerFitScores       Json?    // [{career, fitPercent}]
+  scholarshipEligibility Json?   // ["NSP", "State Merit"]
+  peerRank              Json?    // {school, district, state}
+  computedAt            DateTime @default(now())
+
+  studentSnapshot StudentSnapshot @relation(fields: [studentSnapshotId], references: [id], onDelete: Cascade)
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INGESTED SCHOOL DATA (from CuriousHat)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model SchoolSnapshot {
+  id            String   @id @default(cuid())
+  curioushatId  String   @unique
+  name          String
+  type          String   // PRIVATE, GOVERNMENT, AIDED, CENTRAL
+  board         String
+  udiseCode     String?
+  city          String
+  state         String
+  pincode       String
+  studentCount  Int
+  teacherCount  Int
+  metrics       Json     // {avgPassPercent, avgAttendance, boardExamPassRate, ...}
+  govtSchemes   Json?    // scheme compliance data
+  ingestedAt    DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  schoolAnalytics SchoolAnalytics?
+
+  @@index([state, city])
+  @@index([type])
+}
+
+model SchoolAnalytics {
+  id                     String   @id @default(cuid())
+  schoolSnapshotId       String   @unique
+  passRate3yr            Json     // [75, 78, 82]
+  avgScoreBySubject      Json     // {Math: 72, Science: 68, ...}
+  attendanceTrend        Json     // [92, 91, 93, ...]
+  teacherEffectiveness   Json?    // {teacherName: score}
+  infrastructureScore    Float?   // 0-100
+  improvementIndex       Float?   // year-over-year improvement
+  districtRank           Int?
+  stateRank              Int?
+  computedAt             DateTime @default(now())
+
+  schoolSnapshot SchoolSnapshot @relation(fields: [schoolSnapshotId], references: [id], onDelete: Cascade)
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AI PREDICTIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Prediction {
+  id                String   @id @default(cuid())
+  studentSnapshotId String
+  type              String   // BOARD_SCORE, CAREER_FIT, COLLEGE_MATCH, ENTRANCE_SCORE, DROPOUT_RISK
+  input             Json     // features used for prediction
+  output            Json     // prediction results
+  confidence        Float    // 0-1
+  model             String   // model version/name
+  computedAt        DateTime @default(now())
+
+  studentSnapshot StudentSnapshot @relation(fields: [studentSnapshotId], references: [id], onDelete: Cascade)
+
+  @@index([type])
+  @@index([studentSnapshotId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AGGREGATE ANALYTICS (district/state/national level)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model AggregateReport {
+  id            String   @id @default(cuid())
+  scope         String   // district, state, national
+  scopeId       String   // district name, state code, 'IN'
+  academicYear  String
+  board         String?
+  totalStudents Int
+  totalSchools  Int
+  avgPassRate   Float
+  genderGap     Float?   // boys avg - girls avg
+  dropoutRate   Float?
+  topSchools    Json?    // [{name, score}]
+  bottomSchools Json?    // [{name, score}]
+  subjectWise   Json?    // {Math: 68, Science: 72, ...}
+  govtVsPrivate Json?   // {govtAvg, privateAvg}
+  computedAt    DateTime @default(now())
+
+  @@unique([scope, scopeId, academicYear])
+  @@index([scope])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LEADERBOARDS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Leaderboard {
+  id            String   @id @default(cuid())
+  type          String   // school, district, state
+  scope         String   // state_code, 'national'
+  academicYear  String
+  entries       Json     // [{rank, name, score, improvement}]
+  computedAt    DateTime @default(now())
+
+  @@unique([type, scope, academicYear])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SYNC LOGS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CROSS-VERTICAL INTELLIGENCE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model VerticalDataPoint {
+  id          String   @id @default(cuid())
+  vertical    String   // thecredit, theequinox, yesbroker, justbuild, legalopinion, curioushat, medicines, pifoundation
+  entityId    String   // ID in source vertical
+  entityType  String   // company, individual, school, property, tender, case
+  data        Json     // raw data snapshot
+  features    Json?    // extracted ML features
+  ingestedAt  DateTime @default(now())
+
+  @@unique([vertical, entityId])
+  @@index([vertical])
+  @@index([entityType])
+}
+
+model PatternDetection {
+  id              String   @id @default(cuid())
+  patternType     String   // cross_sell, risk_correlation, market_signal, anomaly, opportunity
+  verticals       String[] // which verticals involved
+  description     String
+  entities        Json     // [{vertical, entityId, role}]
+  confidence      Float    // 0-1
+  impact          String   // low, medium, high, critical
+  actionable      Boolean  @default(true)
+  detectedAt      DateTime @default(now())
+
+  @@index([patternType])
+  @@index([impact])
+}
+
+model CrossVerticalInsight {
+  id              String   @id @default(cuid())
+  sourceVerticals String[] // e.g. ["yesbroker", "thecredit"]
+  insightType     String   // risk_alert, opportunity, trend, correlation
+  title           String
+  description     String
+  dataPoints      Json     // supporting evidence
+  recommendation  String?  // AI-suggested action
+  confidence      Float
+  targetVerticals String[] // who should see this
+  isActioned      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([insightType])
+}
+
+model PredictiveModel {
+  id              String   @id @default(cuid())
+  name            String   // company_default_risk, student_board_score, property_price, tender_win_prob
+  vertical        String   // primary vertical or 'cross'
+  version         String
+  accuracy        Float?
+  precision       Float?
+  recall          Float?
+  f1Score         Float?
+  featureCount    Int?
+  trainingRecords Int?
+  lastTrainedAt   DateTime?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  predictions     PredictiveResult[]
+
+  @@unique([name, version])
+}
+
+model PredictiveResult {
+  id              String   @id @default(cuid())
+  modelId         String
+  entityId        String   // what was predicted on
+  entityType      String
+  vertical        String
+  prediction      Json     // model output
+  confidence      Float
+  computedAt      DateTime @default(now())
+
+  model           PredictiveModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([vertical, entityType])
+  @@index([modelId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SYNC LOGS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model IngestLog {
+  id           String    @id @default(cuid())
+  source       String    // all verticals
+  eventType    String
+  recordCount  Int       @default(1)
+  status       String    @default("received")
+  error        String?
+  receivedAt   DateTime  @default(now())
+  processedAt  DateTime?
+}
+
+model OutgestLog {
+  id           String    @id @default(cuid())
+  target       String    // knowledgehub
+  eventType    String
+  payload      Json
+  status       String    @default("pending")
+  responseCode Int?
+  error        String?
+  createdAt    DateTime  @default(now())
+  sentAt       DateTime?
+}

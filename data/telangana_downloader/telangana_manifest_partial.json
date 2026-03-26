@@ -1,0 +1,643 @@
+{
+  "DIST_01": {
+    "name": "1-Kumaram Bheem Asifabad",
+    "acs": {
+      "AC_001": {
+        "name": "1-Sirpur",
+        "ac_no": 1
+      },
+      "AC_005": {
+        "name": "5-Asifabad(ST)",
+        "ac_no": 5
+      }
+    }
+  },
+  "DIST_02": {
+    "name": "2-Mancherial",
+    "acs": {
+      "AC_002": {
+        "name": "2-Chennur(SC)",
+        "ac_no": 2
+      },
+      "AC_003": {
+        "name": "3-Bellampalli(SC)",
+        "ac_no": 3
+      },
+      "AC_004": {
+        "name": "4-Mancherial",
+        "ac_no": 4
+      }
+    }
+  },
+  "DIST_03": {
+    "name": "3-Adilabad",
+    "acs": {
+      "AC_007": {
+        "name": "7-Adilabad",
+        "ac_no": 7
+      },
+      "AC_008": {
+        "name": "8-Boath(ST)",
+        "ac_no": 8
+      }
+    }
+  },
+  "DIST_04": {
+    "name": "4-Nirmal",
+    "acs": {
+      "AC_006": {
+        "name": "6-Khanapur(ST)",
+        "ac_no": 6
+      },
+      "AC_009": {
+        "name": "9-Nirmal",
+        "ac_no": 9
+      },
+      "AC_010": {
+        "name": "10-Mudhole",
+        "ac_no": 10
+      }
+    }
+  },
+  "DIST_05": {
+    "name": "5-Nizamabad",
+    "acs": {
+      "AC_011": {
+        "name": "11-Armur",
+        "ac_no": 11
+      },
+      "AC_012": {
+        "name": "12-Bodhan",
+        "ac_no": 12
+      },
+      "AC_014": {
+        "name": "14-Banswada",
+        "ac_no": 14
+      },
+      "AC_017": {
+        "name": "17-Nizamabad (Urban)",
+        "ac_no": 17
+      },
+      "AC_018": {
+        "name": "18-Nizamabad (Rural)",
+        "ac_no": 18
+      },
+      "AC_019": {
+        "name": "19-Balkonda",
+        "ac_no": 19
+      }
+    }
+  },
+  "DIST_06": {
+    "name": "6-Kamareddy",
+    "acs": {
+      "AC_013": {
+        "name": "13-Jukkal(SC)",
+        "ac_no": 13
+      },
+      "AC_015": {
+        "name": "15-Yellareddy",
+        "ac_no": 15
+      },
+      "AC_016": {
+        "name": "16-Kamareddy",
+        "ac_no": 16
+      }
+    }
+  },
+  "DIST_07": {
+    "name": "7-Jagtial",
+    "acs": {
+      "AC_020": {
+        "name": "20-Koratla",
+        "ac_no": 20
+      },
+      "AC_021": {
+        "name": "21-Jagtial",
+        "ac_no": 21
+      },
+      "AC_022": {
+        "name": "22-Dharmapuri(SC)",
+        "ac_no": 22
+      }
+    }
+  },
+  "DIST_08": {
+    "name": "8-Peddapalli",
+    "acs": {
+      "AC_023": {
+        "name": "23-Ramagundam",
+        "ac_no": 23
+      },
+      "AC_024": {
+        "name": "24-Manthani",
+        "ac_no": 24
+      },
+      "AC_025": {
+        "name": "25-Peddapalle",
+        "ac_no": 25
+      }
+    }
+  },
+  "DIST_09": {
+    "name": "9-Karimnagar",
+    "acs": {
+      "AC_026": {
+        "name": "26-Karimnagar",
+        "ac_no": 26
+      },
+      "AC_027": {
+        "name": "27-Choppadandi(SC)",
+        "ac_no": 27
+      },
+      "AC_030": {
+        "name": "30-Manakondur(SC)",
+        "ac_no": 30
+      },
+      "AC_031": {
+        "name": "31-Huzurabad",
+        "ac_no": 31
+      }
+    }
+  },
+  "DIST_10": {
+    "name": "10-Rajanna Sircilla",
+    "acs": {
+      "AC_028": {
+        "name": "28-Vemulawada",
+        "ac_no": 28
+      },
+      "AC_029": {
+        "name": "29-Sircilla",
+        "ac_no": 29
+      }
+    }
+  },
+  "DIST_11": {
+    "name": "11-Sangareddy",
+    "acs": {
+      "AC_035": {
+        "name": "35-Narayankhed",
+        "ac_no": 35
+      },
+      "AC_036": {
+        "name": "36-Andole(SC)",
+        "ac_no": 36
+      },
+      "AC_038": {
+        "name": "38-Zaheerabad(SC)",
+        "ac_no": 38
+      },
+      "AC_039": {
+        "name": "39-Sangareddy",
+        "ac_no": 39
+      },
+      "AC_040": {
+        "name": "40-Patancheru",
+        "ac_no": 40
+      }
+    }
+  },
+  "DIST_12": {
+    "name": "12-Medak",
+    "acs": {
+      "AC_034": {
+        "name": "34-Medak",
+        "ac_no": 34
+      },
+      "AC_037": {
+        "name": "37-Narsapur",
+        "ac_no": 37
+      }
+    }
+  },
+  "DIST_13": {
+    "name": "13-Siddipet",
+    "acs": {
+      "AC_032": {
+        "name": "32-Husnabad",
+        "ac_no": 32
+      },
+      "AC_033": {
+        "name": "33-Siddipet",
+        "ac_no": 33
+      },
+      "AC_041": {
+        "name": "41-Dubbak",
+        "ac_no": 41
+      },
+      "AC_042": {
+        "name": "42-Gajwel",
+        "ac_no": 42
+      }
+    }
+  },
+  "DIST_14": {
+    "name": "14-Rangareddy",
+    "acs": {
+      "AC_048": {
+        "name": "48-Ibrahimpatnam",
+        "ac_no": 48
+      },
+      "AC_049": {
+        "name": "49-Lal Bahadur Nagar",
+        "ac_no": 49
+      },
+      "AC_050": {
+        "name": "50-Maheswaram",
+        "ac_no": 50
+      },
+      "AC_051": {
+        "name": "51-Rajendranagar",
+        "ac_no": 51
+      },
+      "AC_052": {
+        "name": "52-Serilingampally",
+        "ac_no": 52
+      },
+      "AC_053": {
+        "name": "53-Chevella(SC)",
+        "ac_no": 53
+      },
+      "AC_083": {
+        "name": "83-Kalwakurthy",
+        "ac_no": 83
+      },
+      "AC_084": {
+        "name": "84-Shadnagar",
+        "ac_no": 84
+      }
+    }
+  },
+  "DIST_15": {
+    "name": "15-Vikarabad",
+    "acs": {
+      "AC_054": {
+        "name": "54-Pargi",
+        "ac_no": 54
+      },
+      "AC_055": {
+        "name": "55-Vicarabad(SC)",
+        "ac_no": 55
+      },
+      "AC_056": {
+        "name": "56-Tandur",
+        "ac_no": 56
+      },
+      "AC_072": {
+        "name": "72-Kodangal",
+        "ac_no": 72
+      }
+    }
+  },
+  "DIST_16": {
+    "name": "16-Medchal Malkajgiri",
+    "acs": {
+      "AC_043": {
+        "name": "43-Medchal",
+        "ac_no": 43
+      },
+      "AC_044": {
+        "name": "44-Malkajgiri",
+        "ac_no": 44
+      },
+      "AC_045": {
+        "name": "45-Quthbullapur",
+        "ac_no": 45
+      },
+      "AC_046": {
+        "name": "46-Kukatpally",
+        "ac_no": 46
+      },
+      "AC_047": {
+        "name": "47-Uppal",
+        "ac_no": 47
+      }
+    }
+  },
+  "DIST_17": {
+    "name": "17-Hyderabad",
+    "acs": {
+      "AC_057": {
+        "name": "57-Musheerabad",
+        "ac_no": 57
+      },
+      "AC_058": {
+        "name": "58-Malakpet",
+        "ac_no": 58
+      },
+      "AC_059": {
+        "name": "59-Amberpet",
+        "ac_no": 59
+      },
+      "AC_060": {
+        "name": "60-Khairatabad",
+        "ac_no": 60
+      },
+      "AC_061": {
+        "name": "61-Jubilee Hills",
+        "ac_no": 61
+      },
+      "AC_062": {
+        "name": "62-Sanathnagar",
+        "ac_no": 62
+      },
+      "AC_063": {
+        "name": "63-Nampally",
+        "ac_no": 63
+      },
+      "AC_064": {
+        "name": "64-Karwan",
+        "ac_no": 64
+      },
+      "AC_065": {
+        "name": "65-Goshamahal",
+        "ac_no": 65
+      },
+      "AC_066": {
+        "name": "66-Charminar",
+        "ac_no": 66
+      },
+      "AC_067": {
+        "name": "67-Chandrayangutta",
+        "ac_no": 67
+      },
+      "AC_068": {
+        "name": "68-Yakutpura",
+        "ac_no": 68
+      },
+      "AC_069": {
+        "name": "69-Bahadurpura",
+        "ac_no": 69
+      },
+      "AC_070": {
+        "name": "70-Secunderabad",
+        "ac_no": 70
+      },
+      "AC_071": {
+        "name": "71-Secunderabad Cantt(SC)",
+        "ac_no": 71
+      }
+    }
+  },
+  "DIST_18": {
+    "name": "18-Mahabubnagar",
+    "acs": {
+      "AC_074": {
+        "name": "74-Mahbubnagar",
+        "ac_no": 74
+      },
+      "AC_075": {
+        "name": "75-Jadcherla",
+        "ac_no": 75
+      },
+      "AC_076": {
+        "name": "76-Devarkadra",
+        "ac_no": 76
+      }
+    }
+  },
+  "DIST_19": {
+    "name": "19-Nagarkurnool",
+    "acs": {
+      "AC_081": {
+        "name": "81-Nagarkurnool",
+        "ac_no": 81
+      },
+      "AC_082": {
+        "name": "82-Achampet(SC)",
+        "ac_no": 82
+      },
+      "AC_085": {
+        "name": "85-Kollapur",
+        "ac_no": 85
+      }
+    }
+  },
+  "DIST_20": {
+    "name": "20-Wanaparthy",
+    "acs": {
+      "AC_078": {
+        "name": "78-Wanaparthy",
+        "ac_no": 78
+      }
+    }
+  },
+  "DIST_21": {
+    "name": "21-Jogulamba Gadwal",
+    "acs": {
+      "AC_079": {
+        "name": "79-Gadwal",
+        "ac_no": 79
+      },
+      "AC_080": {
+        "name": "80-Alampur(SC)(SC)",
+        "ac_no": 80
+      }
+    }
+  },
+  "DIST_22": {
+    "name": "22-Nalgonda",
+    "acs": {
+      "AC_086": {
+        "name": "86-Devarakonda(ST)",
+        "ac_no": 86
+      },
+      "AC_087": {
+        "name": "87-Nagarjuna Sagar",
+        "ac_no": 87
+      },
+      "AC_088": {
+        "name": "88-Miryalaguda",
+        "ac_no": 88
+      },
+      "AC_092": {
+        "name": "92-Nalgonda",
+        "ac_no": 92
+      },
+      "AC_093": {
+        "name": "93-Munugode",
+        "ac_no": 93
+      },
+      "AC_095": {
+        "name": "95-Nakrekal(SC)",
+        "ac_no": 95
+      }
+    }
+  },
+  "DIST_23": {
+    "name": "23-Suryapet",
+    "acs": {
+      "AC_089": {
+        "name": "89-Huzurnagar",
+        "ac_no": 89
+      },
+      "AC_090": {
+        "name": "90-Kodad",
+        "ac_no": 90
+      },
+      "AC_091": {
+        "name": "91-Suryapet",
+        "ac_no": 91
+      },
+      "AC_096": {
+        "name": "96-Thungathurthi(SC)",
+        "ac_no": 96
+      }
+    }
+  },
+  "DIST_24": {
+    "name": "24-Yadadri Bhongiri",
+    "acs": {
+      "AC_094": {
+        "name": "94-Bhongir",
+        "ac_no": 94
+      },
+      "AC_097": {
+        "name": "97-Alair",
+        "ac_no": 97
+      }
+    }
+  },
+  "DIST_25": {
+    "name": "25-Jangaon",
+    "acs": {
+      "AC_098": {
+        "name": "98-Jangoan",
+        "ac_no": 98
+      },
+      "AC_099": {
+        "name": "99-Ghanpur (Station)(SC)",
+        "ac_no": 99
+      },
+      "AC_100": {
+        "name": "100-Palakurthi",
+        "ac_no": 100
+      }
+    }
+  },
+  "DIST_26": {
+    "name": "26-Mahabubabad",
+    "acs": {
+      "AC_101": {
+        "name": "101-Dornakal(ST)",
+        "ac_no": 101
+      },
+      "AC_102": {
+        "name": "102-Mahabubabad(ST)",
+        "ac_no": 102
+      }
+    }
+  },
+  "DIST_27": {
+    "name": "27-Warangal",
+    "acs": {
+      "AC_103": {
+        "name": "103-Narsampet",
+        "ac_no": 103
+      },
+      "AC_106": {
+        "name": "106-Warangal East",
+        "ac_no": 106
+      },
+      "AC_107": {
+        "name": "107-Waradhanapet(SC)",
+        "ac_no": 107
+      }
+    }
+  },
+  "DIST_28": {
+    "name": "28-Hanumakonda",
+    "acs": {
+      "AC_104": {
+        "name": "104-Parkal",
+        "ac_no": 104
+      },
+      "AC_105": {
+        "name": "105-Warangal West",
+        "ac_no": 105
+      }
+    }
+  },
+  "DIST_29": {
+    "name": "29-Jayashankar Bhupalpalle",
+    "acs": {
+      "AC_108": {
+        "name": "108-Bhupalpalle",
+        "ac_no": 108
+      }
+    }
+  },
+  "DIST_30": {
+    "name": "30-Bhadradri",
+    "acs": {
+      "AC_110": {
+        "name": "110-Pinapaka(ST)",
+        "ac_no": 110
+      },
+      "AC_111": {
+        "name": "111-Yellandu(ST)",
+        "ac_no": 111
+      },
+      "AC_117": {
+        "name": "117-Kothagudem",
+        "ac_no": 117
+      },
+      "AC_118": {
+        "name": "118-Aswaraopeta(ST)",
+        "ac_no": 118
+      },
+      "AC_119": {
+        "name": "119-Bhadrachalam(ST)",
+        "ac_no": 119
+      }
+    }
+  },
+  "DIST_31": {
+    "name": "31-Khammam",
+    "acs": {
+      "AC_112": {
+        "name": "112-Khammam",
+        "ac_no": 112
+      },
+      "AC_113": {
+        "name": "113-Palair",
+        "ac_no": 113
+      },
+      "AC_114": {
+        "name": "114-Madhira(SC)",
+        "ac_no": 114
+      },
+      "AC_115": {
+        "name": "115-Wyra(ST)",
+        "ac_no": 115
+      },
+      "AC_116": {
+        "name": "116-Sathupalle(SC)",
+        "ac_no": 116
+      }
+    }
+  },
+  "DIST_32": {
+    "name": "32-Mulugu",
+    "acs": {
+      "AC_109": {
+        "name": "109-Mulug(ST)",
+        "ac_no": 109
+      }
+    }
+  },
+  "DIST_33": {
+    "name": "33-Narayanpet",
+    "acs": {
+      "AC_073": {
+        "name": "73-Narayanpet",
+        "ac_no": 73
+      },
+      "AC_077": {
+        "name": "77-Makthal",
+        "ac_no": 77
+      }
+    }
+  }
+}

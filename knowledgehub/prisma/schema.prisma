@@ -1,0 +1,970 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// KnowledgeHub.ai — Master Data & Analytics Platform
+//
+// MASTER CORE: MCA data, company profiles, golden records, AI personas
+// INTELLIGENCE LAYER: IQEdge.ai (pattern recognition, predictive analytics)
+// VERTICALS: TheCredit, TheEquinox, YesBroker/MyVault, JustBuild,
+//            LegalOpinion/MyWills, CuriousHat, MedicinesDiscount, PI Foundation
+// FEEDBACK LOOP: Engagement data, behavior analytics, AI enhancements
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MASTER LOCATION DATA — India's Complete Geography
+// 28 States + 8 UTs → 800 Districts → 7000 Blocks → 2.5L Panchayats → 7L Villages
+// 1.5L Pincodes → Post Offices → Railway Stations → Airports
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model State {
+  id            String   @id @default(cuid())
+  code          String   @unique  // "DL", "MH", "KA", "TN"
+  name          String
+  nameLocal     String?  // local script name: "दिल्ली", "महाराष्ट्र"
+  type          String   // state, union_territory
+  capital       String?
+  highCourt     String?  // jurisdiction for LegalOpinion
+  population    Int?
+  area          Float?   // sq km
+  literacy      Float?
+  language      String[] // official languages
+  lgdCode       String?  // Local Govt Directory code
+  censuscode    String?
+
+  districts     District[]
+
+  @@index([code])
+  @@index([name])
+}
+
+model District {
+  id            String   @id @default(cuid())
+  stateId       String
+  code          String   @unique  // unique district code
+  name          String
+  nameLocal     String?
+  headquarters  String?
+  population    Int?
+  area          Float?
+  literacy      Float?
+  latitude      Float?
+  longitude     Float?
+  lgdCode       String?  // LGD district code
+  censuscode    String?
+
+  state         State    @relation(fields: [stateId], references: [id])
+  blocks        Block[]
+  pincodes      Pincode[]
+  railwayStations RailwayStation[]
+  postOffices   PostOffice[]
+
+  @@index([stateId])
+  @@index([name])
+}
+
+model Block {
+  id            String   @id @default(cuid())
+  districtId    String
+  name          String
+  nameLocal     String?
+  type          String   @default("block") // block, taluk, tehsil, mandal, circle
+  population    Int?
+  lgdCode       String?
+
+  district      District @relation(fields: [districtId], references: [id])
+  villages      Village[]
+  panchayats    Panchayat[]
+
+  @@index([districtId])
+  @@index([name])
+}
+
+model Panchayat {
+  id            String   @id @default(cuid())
+  blockId       String
+  name          String
+  nameLocal     String?
+  type          String   @default("gram_panchayat") // gram_panchayat, nagar_panchayat, nagar_palika, nagar_nigam
+  population    Int?
+  lgdCode       String?
+
+  block         Block    @relation(fields: [blockId], references: [id])
+  villages      Village[]
+
+  @@index([blockId])
+}
+
+model Village {
+  id            String   @id @default(cuid())
+  blockId       String
+  panchayatId   String?
+  code          String?  @unique // census village code
+  name          String
+  nameLocal     String?
+  population    Int?
+  households    Int?
+  area          Float?   // hectares
+  latitude      Float?
+  longitude     Float?
+  lgdCode       String?  // LGD village code
+  censusCode    String?
+
+  // Connectivity
+  nearestTown   String?
+  distanceToTown Float?  // km
+  hasPostOffice Boolean  @default(false)
+  hasRailway    Boolean  @default(false)
+  hasBankBranch Boolean  @default(false)
+  hasSchool     Boolean  @default(false)
+  hasPhc        Boolean  @default(false) // Primary Health Centre
+  roadType      String?  // NH, SH, district, village, no_road
+
+  block         Block     @relation(fields: [blockId], references: [id])
+  panchayat     Panchayat? @relation(fields: [panchayatId], references: [id])
+
+  @@index([blockId])
+  @@index([name])
+  @@index([latitude, longitude])
+}
+
+model Pincode {
+  id            String   @id @default(cuid())
+  pincode       String   @unique  // 6-digit: "110001"
+  districtId    String?
+  officeName    String?  // delivery post office name
+  officeType    String?  // HO, SO, BO (Head/Sub/Branch)
+  region        String?  // postal region
+  division      String?  // postal division
+  circle        String?  // postal circle
+  taluk         String?
+  state         String
+  district      String
+  latitude      Float?
+  longitude     Float?
+
+  districtRef   District? @relation(fields: [districtId], references: [id])
+  postOffices   PostOffice[]
+
+  @@index([pincode])
+  @@index([districtId])
+  @@index([state, district])
+}
+
+model PostOffice {
+  id            String   @id @default(cuid())
+  name          String
+  branchType    String   // HO, SO, BO
+  deliveryStatus String  // Delivery, Non-Delivery
+  districtId    String?
+  pincodeId     String?
+  pincode       String
+  circle        String?
+  region        String?
+  division      String?
+  telephone     String?
+  latitude      Float?
+  longitude     Float?
+
+  districtRef   District? @relation(fields: [districtId], references: [id])
+  pincodeRef    Pincode?  @relation(fields: [pincodeId], references: [id])
+
+  @@index([pincode])
+  @@index([districtId])
+  @@index([name])
+}
+
+model RailwayStation {
+  id            String   @id @default(cuid())
+  code          String   @unique  // "NDLS", "BCT", "MAS", "HWH"
+  name          String
+  nameLocal     String?
+  districtId    String?
+  state         String
+  zone          String   // NR, SR, WR, ER, CR, etc. (18 zones)
+  division      String?  // railway division
+  category      String?  // A1, A, B, C, D, E, F (A1 = busiest)
+  platforms     Int?
+  latitude      Float?
+  longitude     Float?
+  elevation     Float?   // meters
+  pincode       String?
+
+  districtRef   District? @relation(fields: [districtId], references: [id])
+
+  @@index([code])
+  @@index([districtId])
+  @@index([zone])
+  @@index([name])
+}
+
+model Airport {
+  id            String   @id @default(cuid())
+  iataCode      String?  @unique // "DEL", "BOM", "BLR"
+  icaoCode      String?  @unique // "VIDP", "VABB", "VOBL"
+  name          String
+  city          String
+  state         String
+  type          String   // international, domestic, defense, private
+  operator      String?  // AAI, private, defense
+  runways       Int?
+  latitude      Float?
+  longitude     Float?
+  elevation     Float?
+  pincode       String?
+
+  @@index([city])
+  @@index([state])
+}
+
+model Court {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   // supreme, high, district, sessions, magistrate, tribunal, consumer, family, labor
+  jurisdiction  String   // state code or "national"
+  city          String
+  state         String
+  address       String?
+  pincode       String?
+  benchType     String?  // principal, circuit
+  latitude      Float?
+  longitude     Float?
+
+  @@index([type, jurisdiction])
+  @@index([state, city])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MASTER CORE — MCA & Company Data, Golden Records
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Company {
+  id              String   @id @default(cuid())
+
+  // ── MCA Identifiers (registered companies only) ──
+  cin             String?  @unique // Corporate Identity Number (Public/Private/OPC/Section8)
+  llpin           String?  @unique // LLP Identification Number
+
+  // ── Non-MCA Identifiers (partnerships, proprietorships, all businesses) ──
+  gstin           String?  @unique // 15-digit GST: 07AABCU9603R1ZM
+  udyam           String?  @unique // MSME: UDYAM-XX-00-0000000
+  pan             String?           // PAN of business (hashed)
+  tan             String?           // TAN (tax deduction)
+  shopLicenseNo   String?           // Shop & Establishment (state-level)
+  fssaiLicense    String?           // FSSAI (food business)
+  drugLicense     String?           // Drug License (pharma)
+  iecCode         String?           // Import Export Code
+  partnershipDeedNo String?         // Registrar of Firms (for partnerships)
+  cooperativeRegNo String?          // Cooperative Society registration
+  trustRegNo      String?           // Trust registration number
+
+  // ── Basic Info ──
+  name            String
+  legalName       String?
+  tradeName       String?           // GST trade name / DBA name
+  type            String   // public_ltd, private_ltd, llp, opc, section_8,
+                           // partnership, sole_proprietorship, huf, cooperative, trust, society
+  subType         String?  // micro, small, medium, large (MSME classification)
+  status          String   @default("active")
+  registrationDate DateTime?
+  registrationAuthority String? // MCA, Registrar_of_Firms, State_Govt, FSSAI, etc.
+
+  // ── Financial (MCA companies) ──
+  authorizedCapital Float?
+  paidUpCapital    Float?
+  annualTurnover   Float?  // from UDYAM/GST returns
+  investmentInPlant Float?  // MSME classification basis
+
+  // ── Classification ──
+  industry        String?  // NIC code / sector
+  subIndustry     String?
+  nicCode         String?  // National Industrial Classification
+  businessActivity String?  // from GST: "Retail", "Manufacturing", "Services"
+  msmeCategory    String?  // Micro, Small, Medium (UDYAM)
+
+  // ── Location ──
+  registeredAddress String?
+  operatingAddress  String?  // can differ from registered
+  city            String?
+  state           String?
+  pincode         String?
+  districtId      String?  // link to LocationSync District table
+  latitude        Float?
+  longitude       Float?
+
+  // ── Contact ──
+  email           String?
+  phone           String?
+  website         String?
+
+  // ── Google Maps Discovery Fields ──
+  googlePlaceId   String?  @unique // Google Maps Place ID
+  googleRating    Float?   // 1-5 star rating
+  googleReviews   Int?     // number of reviews
+  googleCategory  String?  // Google's business category
+  googlePhotos    Int?     // count of photos
+  googleUrl       String?  // maps URL
+  isGoogleVerified Boolean @default(false) // Google verified business
+  lastScrapedAt   DateTime? // when we last scraped this from Google
+
+  // ── MCA Compliance ──
+  lastAnnualReturn DateTime?
+  lastBalanceSheet DateTime?
+
+  // ── Source tracking ──
+  source          String   @default("manual") // mca, google_maps, gstin_lookup, udyam, manual, scraper
+  sourceId        String?  // ID in source system
+  enrichedFrom    String[] // ["mca", "google_maps", "gstin"] — multiple sources merged
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  directors       Director[]
+  borrowings      Borrowing[]
+  charges         Charge[]
+  filings         Filing[]
+  goldenRecord    GoldenRecord?
+  aiPersona       AIPersona?
+
+  @@index([name])
+  @@index([gstin])
+  @@index([state, city])
+  @@index([industry])
+  @@index([status])
+  @@index([type])
+  @@index([googlePlaceId])
+  @@index([pincode])
+  @@index([districtId])
+}
+
+model Director {
+  id              String   @id @default(cuid())
+  companyId       String
+  din             String?  // Director Identification Number
+  name            String
+  designation     String   // Director, Managing Director, CEO, CFO, CS
+  appointmentDate DateTime?
+  cessationDate   DateTime?
+  isActive        Boolean  @default(true)
+  nationality     String?
+  pan             String?  // hashed
+  otherDirectorships Json? // [{cin, companyName}]
+
+  company         Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([din])
+  @@index([companyId])
+}
+
+model Borrowing {
+  id              String   @id @default(cuid())
+  companyId       String
+  lender          String
+  lenderType      String   // Bank, NBFC, DFI, Foreign
+  sanctionAmount  Float
+  outstandingAmount Float?
+  interestRate    Float?
+  securityType    String?  // Secured, Unsecured
+  sanctionDate    DateTime?
+  maturityDate    DateTime?
+  status          String   @default("active") // active, repaid, NPA, restructured
+  createdAt       DateTime @default(now())
+
+  company         Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([lender])
+}
+
+model Charge {
+  id              String   @id @default(cuid())
+  companyId       String
+  chargeId        String?  // MCA charge ID
+  chargeHolder    String
+  amount          Float?
+  dateOfCreation  DateTime?
+  dateOfModification DateTime?
+  status          String   @default("open") // open, satisfied, morphed
+
+  company         Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+model Filing {
+  id              String   @id @default(cuid())
+  companyId       String
+  formType        String   // AOC-4, MGT-7, ADT-1, etc.
+  filingDate      DateTime
+  description     String?
+  documentUrl     String?
+
+  company         Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, filingDate])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GOOGLE MAPS BUSINESS DISCOVERY — Scraper results before merge into Company
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model GoogleMapsBusiness {
+  id              String   @id @default(cuid())
+  placeId         String   @unique  // Google Place ID
+  name            String
+  formattedAddress String?
+  latitude        Float
+  longitude       Float
+  types           String[]  // ["restaurant", "food", "establishment"]
+  primaryType     String?   // Google's primary category
+  rating          Float?    // 1-5
+  totalRatings    Int?
+  priceLevel      Int?      // 0-4
+  phone           String?
+  website         String?
+  googleUrl       String?   // maps URL
+  openNow         Boolean?
+  businessHours   Json?     // {monday: "9:00-21:00", ...}
+  photos          Int?      // count
+  isVerified      Boolean   @default(false)
+
+  // Extracted location
+  city            String?
+  state           String?
+  pincode         String?
+  districtId      String?
+
+  // Scraper metadata
+  searchQuery     String?   // what we searched: "restaurants near 110001"
+  searchCategory  String?   // business_vertical: real_estate, legal, medical, education, etc.
+  scrapedAt       DateTime  @default(now())
+  batchId         String?   // scraper batch ID
+
+  // Matching
+  matchedCompanyId String?  // if merged into Company table
+  matchScore      Float?    // dedup confidence
+  matchStatus     String   @default("pending") // pending, matched, new_company, skipped
+
+  @@index([city, state])
+  @@index([primaryType])
+  @@index([matchStatus])
+  @@index([pincode])
+  @@index([scrapedAt])
+}
+
+// Scraper job tracking
+model ScraperJob {
+  id              String   @id @default(cuid())
+  source          String   // google_maps, mca_portal, gstin_api, udyam_portal
+  query           String   // search query or parameters
+  targetArea      Json?    // {state, district, pincode, lat, lng, radius}
+  category        String?  // business vertical
+  status          String   @default("queued") // queued, running, completed, failed
+  totalFound      Int      @default(0)
+  totalNew        Int      @default(0)
+  totalMatched    Int      @default(0)
+  startedAt       DateTime?
+  completedAt     DateTime?
+  error           String?
+  createdAt       DateTime @default(now())
+
+  @@index([source, status])
+  @@index([createdAt])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GOLDEN RECORDS & DEDUP
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model GoldenRecord {
+  id              String   @id @default(cuid())
+  companyId       String   @unique
+  entityType      String   // company, individual, trust
+  canonicalName   String   // deduplicated, cleaned name
+  mergedFrom      Json?    // [{source, originalId, matchScore}]
+  verticalPresence Json    // {yesbroker: true, theequinox: false, thecredit: true, ...}
+  dataQualityScore Float   // 0-100
+  lastEnriched    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  company         Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model PersonGoldenRecord {
+  id              String   @id @default(cuid())
+  canonicalName   String
+  din             String?  @unique
+  pan             String?  // hashed
+  email           String?
+  phone           String?
+  mergedFrom      Json?    // [{source, originalId, matchScore}]
+  directorships   Json?    // [{cin, companyName, designation}]
+  verticalPresence Json    // which platforms this person appears in
+  wealthEstimate  Float?
+  riskProfile     Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([canonicalName])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AI PERSONAS & INSIGHTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model AIPersona {
+  id              String   @id @default(cuid())
+  companyId       String   @unique
+  industryLabel   String
+  sizeLabel       String   // micro, small, medium, large, enterprise
+  growthLabel     String   // declining, stable, growing, hypergrowth
+  riskLabel       String   // low, medium, high, critical
+  creditScore     Float?   // 0-900 (like CIBIL but for companies)
+  fundingStage    String?  // bootstrapped, seed, series_a, series_b, pre_ipo, public
+  keyInsights     Json     // AI-generated insights about the company
+  predictedRevenue Float?
+  predictedGrowth Float?   // % YoY
+  competitors     Json?    // [{name, cin, similarity}]
+  opportunities   Json?    // cross-vertical opportunities
+  generatedAt     DateTime @default(now())
+
+  company         Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CROSS-VERTICAL RELATIONSHIP TABLE
+// The key table that connects entities across all verticals
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model EntityRelationship {
+  id              String   @id @default(cuid())
+  // Source entity
+  sourceVertical  String   // thecredit, theequinox, yesbroker, justbuild, legalopinion, curioushat, medicines, pifoundation
+  sourceEntityId  String   // ID in source vertical
+  sourceType      String   // company, individual, school, property, tender, case, student, doctor
+  sourceName      String
+
+  // Target entity
+  targetVertical  String
+  targetEntityId  String
+  targetType      String
+  targetName      String
+
+  // Relationship
+  relationshipType String  // same_entity, director_of, borrower_of, client_of, owns, affiliated_to,
+                           // student_of, parent_of, enrolled_in, applied_to, sponsored_by, listed_on,
+                           // counsel_for, tender_bidder, csr_beneficiary, patient_of
+  strength        Float    @default(1.0) // 0-1 confidence of the relationship
+  direction       String   @default("bidirectional") // unidirectional, bidirectional
+  metadata        Json?    // additional context about the relationship
+  discoveredBy    String   @default("manual") // manual, dedup, ai_inference, sync
+  isVerified      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([sourceVertical, sourceEntityId, targetVertical, targetEntityId, relationshipType])
+  @@index([sourceVertical, sourceEntityId])
+  @@index([targetVertical, targetEntityId])
+  @@index([relationshipType])
+}
+
+// Tracks how the same entity appears across different verticals (dedup)
+model EntityMapping {
+  id              String   @id @default(cuid())
+  goldenRecordType String  // company, person
+  goldenRecordId  String   // GoldenRecord.id or PersonGoldenRecord.id
+  vertical        String
+  externalId      String   // ID in source vertical
+  entityType      String
+  name            String
+  matchScore      Float    // 0-1 dedup confidence
+  matchMethod     String   // exact_cin, exact_din, fuzzy_name, pan_match, email_match, ai_match
+  lastSyncedAt    DateTime?
+  createdAt       DateTime @default(now())
+
+  @@unique([vertical, externalId])
+  @@index([goldenRecordId])
+  @@index([vertical])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PEOPLE & CONNECTIONS — Social graph (like Facebook/LinkedIn)
+// Shows who is connected to whom, degree of connection, family + professional
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Person {
+  id              String    @id @default(cuid())
+  goldenRecordId  String?   @unique
+  name            String
+  avatarUrl       String?
+  gender          String?
+  dateOfBirth     DateTime?
+  city            String?
+  state           String?
+  phone           String?
+  email           String?
+  headline        String?   // "Class X Student at DPS RK Puram" or "Director, Reliance Industries"
+  bio             String?
+  religion        String?   // Hindu, Muslim, Christian, Sikh, Jain, Buddhist, Parsi, Tribal
+  caste           String?   // General, OBC, SC, ST, EWS
+  tribe           String?   // For tribal succession: Khasi, Garo, Mizo, Santhal, etc.
+  language        String?   // Primary language: hindi, tamil, telugu, etc.
+  maritalStatus   String?   // Single, Married, Divorced, Widowed
+  successionLaw   String?   // hindu_succession, muslim_shariat, indian_succession, goa_civil_code, tribal_custom
+
+  // Where this person exists across verticals
+  verticalIds     Json?     // {curioushat: "id", mywills: "id", yesbroker: "id", ...}
+
+  connectionsFrom Connection[] @relation("ConnFrom")
+  connectionsTo   Connection[] @relation("ConnTo")
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([name])
+  @@index([state, city])
+}
+
+model Connection {
+  id          String   @id @default(cuid())
+  fromId      String
+  toId        String
+
+  // ── What's the relationship ──
+  type        String   // family, professional, educational, legal, financial
+
+  // Family: Indian relationships (shown like Facebook)
+  // father, mother, son, daughter, spouse, brother, sister,
+  // chacha, chachi, tau, tai, bua, fufa, mama, mausi, mausa,
+  // dada, dadi, nana, nani, grandson, granddaughter,
+  // cousin, nephew, niece,
+  // devar, jeth, bhabhi, nanad, sala, sali, damaad, bahu,
+  // father_in_law, mother_in_law,
+  // adopted_son, adopted_daughter, step_father, step_mother, guardian
+  //
+  // Professional: colleague, employer, employee, business_partner, director_of, investor
+  // Educational: classmate, teacher_of, student_of, alumni, mentor
+  // Legal: counsel_for, nominee, beneficiary, witness, guarantor
+  // Financial: joint_account, co_borrower, co_applicant, nominee
+
+  label       String   // canonical English: "Father", "Chacha", "Classmate", "Director"
+  labelHindi  String?  // Hindi: "पिता", "चाचा"
+  labels      Json?    // ALL languages: {tamil:{roman:"Appa",script:"அப்பா"}, telugu:{roman:"Nanna",script:"నాన్న"}, ...}
+  relationKey String?  // key into indian-relations.ts: "father", "chacha", "mausera_bhai"
+
+  // ── Connection degree (computed) ──
+  degree      Int      @default(1) // 1st, 2nd, 3rd connection (like LinkedIn)
+  // 1st = direct connection
+  // 2nd = connected through 1 person
+  // 3rd = connected through 2 people
+
+  // ── Metadata ──
+  side        String?  // paternal, maternal (for family)
+  since       DateTime? // when the connection started (marriage date, joining date, etc.)
+  isActive    Boolean  @default(true)
+  isVerified  Boolean  @default(false) // both parties confirmed
+  source      String   @default("manual") // manual, sync, ai_inferred, imported
+
+  // ── Which verticals care about this connection ──
+  verticals   String[] // ["mywills", "curioushat", "myvault"]
+
+  // ── For succession/legal (optional, only when relevant) ──
+  heirClass   String?  // class_1, class_2 (Hindu Succession Act — only for MyWills)
+
+  from        Person   @relation("ConnFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to          Person   @relation("ConnTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([fromId, toId, label])
+  @@index([fromId])
+  @@index([toId])
+  @@index([type])
+  @@index([degree])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VERTICAL CLIENT DATA (from each platform)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model VerticalClient {
+  id            String   @id @default(cuid())
+  vertical      String   // thecredit, theequinox, yesbroker, justbuild, legalopinion, curioushat, medicines, pifoundation
+  externalId    String   // ID in the source vertical
+  entityType    String   // company, individual, school, institute
+  name          String
+  data          Json     // vertical-specific data snapshot
+  metadata      Json?    // enrichment data
+  goldenRecordId String? // link to golden record if matched
+  ingestedAt    DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([vertical, externalId])
+  @@index([vertical])
+  @@index([goldenRecordId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// WEALTH DATA (from MyVault — YesBroker + TheEquinox + MyWills)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model WealthSnapshot {
+  id          String   @id @default(cuid())
+  userId      String
+  userType    String   @default("individual")
+  state       String
+  city        String
+  netWorth    Json     // {total, realEstate, investments, estate, cash}
+  platforms   Json     // {yesbroker, theequinox, mywills}
+  metrics     Json     // {wealthGrowthMoM, diversificationScore, riskScore}
+  ingestedAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([state, city])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FINANCE DATA (from TheCredit.exchange)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model CreditSnapshot {
+  id              String   @id @default(cuid())
+  companyCin      String?
+  companyName     String
+  loanScore       Float?   // 0-100 AI credit score
+  borrowingTotal  Float?
+  outstandingTotal Float?
+  npaRisk         Float?   // 0-1 probability
+  sectorRisk      String?  // low, medium, high
+  financials      Json?    // {revenue, profit, assets, liabilities}
+  ingestedAt      DateTime @default(now())
+
+  @@index([companyCin])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INFRASTRUCTURE DATA (from JustBuild.com)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model TenderSnapshot {
+  id              String   @id @default(cuid())
+  tenderRef       String?  // GEM/CPPP reference
+  title           String
+  department      String
+  value           Float?
+  location        Json?    // {state, city}
+  category        String?  // construction, IT, services, supplies
+  status          String   // published, awarded, cancelled
+  bidderCount     Int?
+  winnerName      String?
+  winnerCin       String?
+  publishedAt     DateTime?
+  closingAt       DateTime?
+  ingestedAt      DateTime @default(now())
+
+  @@index([department])
+  @@index([status])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LEGAL DATA (from LegalOpinion.co.in)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model LegalSnapshot {
+  id              String   @id @default(cuid())
+  caseType        String   // will, succession, property_dispute, corporate, contract
+  jurisdiction    String   // state or court
+  status          String   // active, resolved, appealed
+  partiesCount    Int?
+  estimatedValue  Float?
+  willsCoverage   Json?    // {totalWills, assetsValue, beneficiaries}
+  ingestedAt      DateTime @default(now())
+
+  @@index([caseType])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EDUCATION DATA (from IQEdge / CuriousHat)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model EducationSnapshot {
+  id              String   @id @default(cuid())
+  dataType        String
+  region          Json
+  academicYear    String
+  board           String?
+  totalStudents   Int?
+  avgBoardScore   Float?
+  topStreamDemand Json?
+  topEntranceExams Json?
+  admissionRate   Float?
+  coachingPenetration Float?
+  rawPayload      Json
+  ingestedAt      DateTime @default(now())
+
+  @@index([dataType])
+  @@index([academicYear])
+}
+
+model AdmissionFunnel {
+  id                String   @id @default(cuid())
+  academicYear      String
+  region            Json
+  totalProfiles     Int
+  totalLeadsSent    Int
+  totalApplications Int
+  totalAdmissions   Int
+  conversionRate    Float
+  topColleges       Json
+  topCoaching       Json
+  avgLeadCost       Float
+  computedAt        DateTime @default(now())
+
+  @@index([academicYear])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HEALTHCARE DATA (from MedicinesDiscount)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model HealthcareSnapshot {
+  id              String   @id @default(cuid())
+  category        String   // price_comparison, pharmacy_coverage, drug_availability
+  region          Json     // {state, city, pincode}
+  avgDiscount     Float?
+  pharmacyCount   Int?
+  topDrugs        Json?    // [{name, genericName, avgPrice, maxDiscount}]
+  priceIndex      Float?   // relative price index vs national average
+  ingestedAt      DateTime @default(now())
+
+  @@index([category])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CSR DATA (from PI Foundation)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model CSRSnapshot {
+  id              String   @id @default(cuid())
+  companyCin      String?
+  companyName     String?
+  csrSpend        Float?
+  csrObligation   Float?
+  projects        Json?    // [{name, sector, amount, beneficiaries}]
+  donationTotal   Float?
+  impactMetrics   Json?    // {schoolsSponsored, studentsReached, ...}
+  financialYear   String
+  ingestedAt      DateTime @default(now())
+
+  @@index([companyCin])
+  @@index([financialYear])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CROSS-PLATFORM ANALYTICS & REPORTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model MasterReport {
+  id          String   @id @default(cuid())
+  reportType  String
+  scope       String
+  scopeId     String
+  period      String
+  data        Json
+  generatedAt DateTime @default(now())
+
+  @@unique([reportType, scope, scopeId, period])
+  @@index([reportType])
+}
+
+model PlatformMetrics {
+  id              String   @id @default(cuid())
+  platform        String   // all verticals
+  metricType      String   // users, revenue, engagement, sync_health
+  value           Float
+  metadata        Json?
+  recordedAt      DateTime @default(now())
+
+  @@index([platform, metricType])
+}
+
+model MarketInsight {
+  id          String   @id @default(cuid())
+  sector      String   // real_estate, equities, education, healthcare, legal, infra, finance
+  region      Json
+  insight     String
+  dataPoints  Json
+  confidence  Float
+  source      String
+  createdAt   DateTime @default(now())
+
+  @@index([sector])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FEEDBACK & LEARNING LOOPS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model EngagementEvent {
+  id          String   @id @default(cuid())
+  vertical    String
+  userId      String
+  eventType   String   // page_view, click, search, conversion, churn_risk
+  eventData   Json
+  sessionId   String?
+  createdAt   DateTime @default(now())
+
+  @@index([vertical, eventType])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model BehaviorAnalytic {
+  id              String   @id @default(cuid())
+  vertical        String
+  cohort          String   // segment label
+  metric          String   // retention_7d, ltv, churn_rate, conversion, nps
+  value           Float
+  sampleSize      Int?
+  period          String   // '2026-W12', '2026-03', '2025-26'
+  computedAt      DateTime @default(now())
+
+  @@index([vertical, metric])
+}
+
+model AIEnhancement {
+  id              String   @id @default(cuid())
+  vertical        String
+  modelName       String   // recommendation_engine, churn_predictor, lead_scorer
+  version         String
+  accuracy        Float?
+  improvement     Float?   // % improvement over previous version
+  trainingData    Json?    // {source, recordCount, dateRange}
+  deployedAt      DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([vertical, modelName])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INGEST LOGS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model IngestLog {
+  id           String    @id @default(cuid())
+  source       String    // all verticals + iqedge
+  dataType     String
+  recordCount  Int       @default(1)
+  status       String    @default("received")
+  error        String?
+  receivedAt   DateTime  @default(now())
+  processedAt  DateTime?
+
+  @@index([source, status])
+}

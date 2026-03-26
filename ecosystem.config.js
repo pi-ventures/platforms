@@ -10,7 +10,7 @@
 // ─────────────────────────────────────────────────────────────────
 
 const NODE = 'C:\\Program Files\\nodejs\\node.exe'
-const NEXT = 'node_modules\\.bin\\next'
+const NEXT = 'node_modules/next/dist/bin/next'
 
 module.exports = {
   apps: [
@@ -59,12 +59,89 @@ module.exports = {
       watch: false,
     },
 
+    // ── CuriousHat.ai — EdTech Platform ──────────────── :3005 ──
+    {
+      name: 'curioushat',
+      cwd: './curioushat',
+      script: NODE,
+      args: 'node_modules/next/dist/bin/next dev -p 3005',
+      interpreter: 'none',
+      env: { NODE_ENV: 'development' },
+      watch: false,
+    },
+
+    // ── IQEdge.ai — Intelligence Layer ─────────────────── :3006 ──
+    {
+      name: 'iqedge',
+      cwd: './iqedge',
+      script: NODE,
+      args: `${NEXT} dev -p 3006`,
+      interpreter: 'none',
+      env: { NODE_ENV: 'development' },
+      watch: false,
+    },
+
+    // ── KnowledgeHub.ai — Master Core ──────────────── :3007 ──
+    {
+      name: 'knowledgehub',
+      cwd: './knowledgehub',
+      script: NODE,
+      args: `${NEXT} dev -p 3007`,
+      interpreter: 'none',
+      env: { NODE_ENV: 'development' },
+      watch: false,
+    },
+
+    // ── TheCredit.exchange — Finance ──────────────────── :3009 ──
+    {
+      name: 'thecredit',
+      cwd: './thecredit',
+      script: NODE,
+      args: `${NEXT} dev -p 3009`,
+      interpreter: 'none',
+      env: { NODE_ENV: 'development' },
+      watch: false,
+    },
+
+    // ── JustBuild.com — Infrastructure ──────────────── :3010 ──
+    {
+      name: 'justbuild',
+      cwd: './justbuild',
+      script: NODE,
+      args: `${NEXT} dev -p 3010`,
+      interpreter: 'none',
+      env: { NODE_ENV: 'development' },
+      watch: false,
+    },
+
+    // ── LegalOpinion.co.in — Legal + MyWills ────────── :3011 ──
+    {
+      name: 'legalopinion',
+      cwd: './legalopinion',
+      script: NODE,
+      args: `${NEXT} dev -p 3011`,
+      interpreter: 'none',
+      env: { NODE_ENV: 'development' },
+      watch: false,
+    },
+
+    // ── PI Foundation — CSR & Impact ────────────────── :3012 ──
+    {
+      name: 'pifoundation',
+      cwd: './pifoundation',
+      script: NODE,
+      args: `${NEXT} dev -p 3012`,
+      interpreter: 'none',
+      env: { NODE_ENV: 'development' },
+      watch: false,
+    },
+
     // ── MedicinesDiscount UI ──────────────────────────── :3008 ──
     {
       name: 'meddisc-ui',
       cwd: './medicines-discount/apps/ui',
       script: NODE,
-      args: `${NEXT} dev -p 3008`,
+      args: 'node_modules/next/dist/bin/next dev -p 3008',
       interpreter: 'none',
       env: {
         NODE_ENV: 'development',

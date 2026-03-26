@@ -1,0 +1,644 @@
+{
+  "1": {
+    "name": "1-Kumaram Bheem Asifabad",
+    "acs": {
+      "1": {
+        "name": "1-Sirpur",
+        "parts": 320
+      },
+      "5": {
+        "name": "5-Asifabad(ST)",
+        "parts": 358
+      }
+    }
+  },
+  "2": {
+    "name": "2-Mancherial",
+    "acs": {
+      "2": {
+        "name": "2-Chennur(SC)",
+        "parts": 230
+      },
+      "3": {
+        "name": "3-Bellampalli(SC)",
+        "parts": 227
+      },
+      "4": {
+        "name": "4-Mancherial",
+        "parts": 290
+      }
+    }
+  },
+  "3": {
+    "name": "3-Adilabad",
+    "acs": {
+      "7": {
+        "name": "7-Adilabad",
+        "parts": 292
+      },
+      "8": {
+        "name": "8-Boath(ST)",
+        "parts": 303
+      }
+    }
+  },
+  "4": {
+    "name": "4-Nirmal",
+    "acs": {
+      "6": {
+        "name": "6-Khanapur(ST)",
+        "parts": 308
+      },
+      "9": {
+        "name": "9-Nirmal",
+        "parts": 306
+      },
+      "10": {
+        "name": "10-Mudhole",
+        "parts": 311
+      }
+    }
+  },
+  "5": {
+    "name": "5-Nizamabad",
+    "acs": {
+      "11": {
+        "name": "11-Armur",
+        "parts": 219
+      },
+      "12": {
+        "name": "12-Bodhan",
+        "parts": 246
+      },
+      "14": {
+        "name": "14-Banswada",
+        "parts": 259
+      },
+      "17": {
+        "name": "17-Nizamabad (Urban)",
+        "parts": 301
+      },
+      "18": {
+        "name": "18-Nizamabad (Rural)",
+        "parts": 293
+      },
+      "19": {
+        "name": "19-Balkonda",
+        "parts": 247
+      }
+    }
+  },
+  "6": {
+    "name": "6-Kamareddy",
+    "acs": {
+      "13": {
+        "name": "13-Jukkal(SC)",
+        "parts": 255
+      },
+      "15": {
+        "name": "15-Yellareddy",
+        "parts": 274
+      },
+      "16": {
+        "name": "16-Kamareddy",
+        "parts": 267
+      }
+    }
+  },
+  "7": {
+    "name": "7-Jagtial",
+    "acs": {
+      "20": {
+        "name": "20-Koratla",
+        "parts": 262
+      },
+      "21": {
+        "name": "21-Jagtial",
+        "parts": 254
+      },
+      "22": {
+        "name": "22-Dharmapuri(SC)",
+        "parts": 269
+      }
+    }
+  },
+  "8": {
+    "name": "8-Peddapalli",
+    "acs": {
+      "23": {
+        "name": "23-Ramagundam",
+        "parts": 262
+      },
+      "24": {
+        "name": "24-Manthani",
+        "parts": 292
+      },
+      "25": {
+        "name": "25-Peddapalle",
+        "parts": 291
+      }
+    }
+  },
+  "9": {
+    "name": "9-Karimnagar",
+    "acs": {
+      "26": {
+        "name": "26-Karimnagar",
+        "parts": 390
+      },
+      "27": {
+        "name": "27-Choppadandi(SC)",
+        "parts": 327
+      },
+      "30": {
+        "name": "30-Manakondur(SC)",
+        "parts": 316
+      },
+      "31": {
+        "name": "31-Huzurabad",
+        "parts": 305
+      }
+    }
+  },
+  "10": {
+    "name": "10-Rajanna Sircilla",
+    "acs": {
+      "28": {
+        "name": "28-Vemulawada",
+        "parts": 262
+      },
+      "29": {
+        "name": "29-Sircilla",
+        "parts": 287
+      }
+    }
+  },
+  "11": {
+    "name": "11-Sangareddy",
+    "acs": {
+      "35": {
+        "name": "35-Narayankhed",
+        "parts": 298
+      },
+      "36": {
+        "name": "36-Andole(SC)",
+        "parts": 317
+      },
+      "38": {
+        "name": "38-Zaheerabad(SC)",
+        "parts": 314
+      },
+      "39": {
+        "name": "39-Sangareddy",
+        "parts": 282
+      },
+      "40": {
+        "name": "40-Patancheru",
+        "parts": 422
+      }
+    }
+  },
+  "12": {
+    "name": "12-Medak",
+    "acs": {
+      "34": {
+        "name": "34-Medak",
+        "parts": 278
+      },
+      "37": {
+        "name": "37-Narsapur",
+        "parts": 308
+      }
+    }
+  },
+  "13": {
+    "name": "13-Siddipet",
+    "acs": {
+      "32": {
+        "name": "32-Husnabad",
+        "parts": 309
+      },
+      "33": {
+        "name": "33-Siddipet",
+        "parts": 273
+      },
+      "41": {
+        "name": "41-Dubbak",
+        "parts": 253
+      },
+      "42": {
+        "name": "42-Gajwel",
+        "parts": 322
+      }
+    }
+  },
+  "14": {
+    "name": "14-Rangareddy",
+    "acs": {
+      "48": {
+        "name": "48-Ibrahimpatnam",
+        "parts": 359
+      },
+      "49": {
+        "name": "49-Lal Bahadur Nagar",
+        "parts": 577
+      },
+      "50": {
+        "name": "50-Maheswaram",
+        "parts": 542
+      },
+      "51": {
+        "name": "51-Rajendranagar",
+        "parts": 547
+      },
+      "52": {
+        "name": "52-Serilingampally",
+        "parts": 639
+      },
+      "53": {
+        "name": "53-Chevella(SC)",
+        "parts": 298
+      },
+      "83": {
+        "name": "83-Kalwakurthy",
+        "parts": 271
+      },
+      "84": {
+        "name": "84-Shadnagar",
+        "parts": 268
+      }
+    }
+  },
+  "15": {
+    "name": "15-Vikarabad",
+    "acs": {
+      "54": {
+        "name": "54-Pargi",
+        "parts": 305
+      },
+      "55": {
+        "name": "55-Vicarabad(SC)",
+        "parts": 284
+      },
+      "56": {
+        "name": "56-Tandur",
+        "parts": 269
+      },
+      "72": {
+        "name": "72-Kodangal",
+        "parts": 275
+      }
+    }
+  },
+  "16": {
+    "name": "16-Medchal Malkajgiri",
+    "acs": {
+      "43": {
+        "name": "43-Medchal",
+        "parts": 601
+      },
+      "44": {
+        "name": "44-Malkajgiri",
+        "parts": 418
+      },
+      "45": {
+        "name": "45-Quthbullapur",
+        "parts": 592
+      },
+      "46": {
+        "name": "46-Kukatpally",
+        "parts": 417
+      },
+      "47": {
+        "name": "47-Uppal",
+        "parts": 407
+      }
+    }
+  },
+  "17": {
+    "name": "17-Hyderabad",
+    "acs": {
+      "57": {
+        "name": "57-Musheerabad",
+        "parts": 274
+      },
+      "58": {
+        "name": "58-Malakpet",
+        "parts": 300
+      },
+      "59": {
+        "name": "59-Amberpet",
+        "parts": 236
+      },
+      "60": {
+        "name": "60-Khairatabad",
+        "parts": 245
+      },
+      "61": {
+        "name": "61-Jubilee Hills",
+        "parts": 300,
+        "estimated": true
+      },
+      "62": {
+        "name": "62-Sanathnagar",
+        "parts": 229
+      },
+      "63": {
+        "name": "63-Nampally",
+        "parts": 276
+      },
+      "64": {
+        "name": "64-Karwan",
+        "parts": 311
+      },
+      "65": {
+        "name": "65-Goshamahal",
+        "parts": 235
+      },
+      "66": {
+        "name": "66-Charminar",
+        "parts": 198
+      },
+      "67": {
+        "name": "67-Chandrayangutta",
+        "parts": 305
+      },
+      "68": {
+        "name": "68-Yakutpura",
+        "parts": 332
+      },
+      "69": {
+        "name": "69-Bahadurpura",
+        "parts": 263
+      },
+      "70": {
+        "name": "70-Secunderabad",
+        "parts": 220
+      },
+      "71": {
+        "name": "71-Secunderabad Cantt(SC)",
+        "parts": 231
+      }
+    }
+  },
+  "18": {
+    "name": "18-Mahabubnagar",
+    "acs": {
+      "74": {
+        "name": "74-Mahbubnagar",
+        "parts": 274
+      },
+      "75": {
+        "name": "75-Jadcherla",
+        "parts": 278
+      },
+      "76": {
+        "name": "76-Devarkadra",
+        "parts": 294
+      }
+    }
+  },
+  "19": {
+    "name": "19-Nagarkurnool",
+    "acs": {
+      "81": {
+        "name": "81-Nagarkurnool",
+        "parts": 270
+      },
+      "82": {
+        "name": "82-Achampet(SC)",
+        "parts": 326
+      },
+      "85": {
+        "name": "85-Kollapur",
+        "parts": 284
+      }
+    }
+  },
+  "20": {
+    "name": "20-Wanaparthy",
+    "acs": {
+      "78": {
+        "name": "78-Wanaparthy",
+        "parts": 316
+      }
+    }
+  },
+  "21": {
+    "name": "21-Jogulamba Gadwal",
+    "acs": {
+      "79": {
+        "name": "79-Gadwal",
+        "parts": 303
+      },
+      "80": {
+        "name": "80-Alampur(SC)(SC)",
+        "parts": 291
+      }
+    }
+  },
+  "22": {
+    "name": "22-Nalgonda",
+    "acs": {
+      "86": {
+        "name": "86-Devarakonda(ST)",
+        "parts": 326
+      },
+      "87": {
+        "name": "87-Nagarjuna Sagar",
+        "parts": 306
+      },
+      "88": {
+        "name": "88-Miryalaguda",
+        "parts": 264
+      },
+      "92": {
+        "name": "92-Nalgonda",
+        "parts": 288
+      },
+      "93": {
+        "name": "93-Munugode",
+        "parts": 317
+      },
+      "95": {
+        "name": "95-Nakrekal(SC)",
+        "parts": 311
+      }
+    }
+  },
+  "23": {
+    "name": "23-Suryapet",
+    "acs": {
+      "89": {
+        "name": "89-Huzurnagar",
+        "parts": 311
+      },
+      "90": {
+        "name": "90-Kodad",
+        "parts": 296
+      },
+      "91": {
+        "name": "91-Suryapet",
+        "parts": 271
+      },
+      "96": {
+        "name": "96-Thungathurthi(SC)",
+        "parts": 327
+      }
+    }
+  },
+  "24": {
+    "name": "24-Yadadri Bhongiri",
+    "acs": {
+      "94": {
+        "name": "94-Bhongir",
+        "parts": 257
+      },
+      "97": {
+        "name": "97-Alair",
+        "parts": 309
+      }
+    }
+  },
+  "25": {
+    "name": "25-Jangaon",
+    "acs": {
+      "98": {
+        "name": "98-Jangoan",
+        "parts": 278
+      },
+      "99": {
+        "name": "99-Ghanpur (Station)(SC)",
+        "parts": 291
+      },
+      "100": {
+        "name": "100-Palakurthi",
+        "parts": 296
+      }
+    }
+  },
+  "26": {
+    "name": "26-Mahabubabad",
+    "acs": {
+      "101": {
+        "name": "101-Dornakal(ST)",
+        "parts": 267
+      },
+      "102": {
+        "name": "102-Mahabubabad(ST)",
+        "parts": 288
+      }
+    }
+  },
+  "27": {
+    "name": "27-Warangal",
+    "acs": {
+      "103": {
+        "name": "103-Narsampet",
+        "parts": 283
+      },
+      "106": {
+        "name": "106-Warangal East",
+        "parts": 230
+      },
+      "107": {
+        "name": "107-Waradhanapet(SC)",
+        "parts": 282
+      }
+    }
+  },
+  "28": {
+    "name": "28-Hanumakonda",
+    "acs": {
+      "104": {
+        "name": "104-Parkal",
+        "parts": 239
+      },
+      "105": {
+        "name": "105-Warangal West",
+        "parts": 244
+      }
+    }
+  },
+  "29": {
+    "name": "29-Jayashankar Bhupalpalle",
+    "acs": {
+      "108": {
+        "name": "108-Bhupalpalle",
+        "parts": 317
+      }
+    }
+  },
+  "30": {
+    "name": "30-Bhadradri",
+    "acs": {
+      "110": {
+        "name": "110-Pinapaka(ST)",
+        "parts": 245
+      },
+      "111": {
+        "name": "111-Yellandu(ST)",
+        "parts": 243
+      },
+      "117": {
+        "name": "117-Kothagudem",
+        "parts": 253
+      },
+      "118": {
+        "name": "118-Aswaraopeta(ST)",
+        "parts": 184
+      },
+      "119": {
+        "name": "119-Bhadrachalam(ST)",
+        "parts": 179
+      }
+    }
+  },
+  "31": {
+    "name": "31-Khammam",
+    "acs": {
+      "112": {
+        "name": "112-Khammam",
+        "parts": 355
+      },
+      "113": {
+        "name": "113-Palair",
+        "parts": 291
+      },
+      "114": {
+        "name": "114-Madhira(SC)",
+        "parts": 268
+      },
+      "115": {
+        "name": "115-Wyra(ST)",
+        "parts": 252
+      },
+      "116": {
+        "name": "116-Sathupalle(SC)",
+        "parts": 294
+      }
+    }
+  },
+  "32": {
+    "name": "32-Mulugu",
+    "acs": {
+      "109": {
+        "name": "109-Mulug(ST)",
+        "parts": 303
+      }
+    }
+  },
+  "33": {
+    "name": "33-Narayanpet",
+    "acs": {
+      "73": {
+        "name": "73-Narayanpet",
+        "parts": 270
+      },
+      "77": {
+        "name": "77-Makthal",
+        "parts": 284
+      }
+    }
+  }
+}
