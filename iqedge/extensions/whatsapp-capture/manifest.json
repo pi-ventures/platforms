@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "IQEdge WhatsApp Capture",
+  "version": "1.0.0",
+  "description": "Capture WhatsApp contacts and conversations directly into IQEdge CRM",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["https://web.whatsapp.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

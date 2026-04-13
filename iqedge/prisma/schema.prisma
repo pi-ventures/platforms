@@ -6,7 +6,7 @@
 // Receives from ALL verticals:
 //   TheCredit.exchange (finance) · TheEquinox.ai (trading) · YesBroker (real estate)
 //   JustBuild.com (infra) · LegalOpinion (legal) · CuriousHat (education)
-//   MedicinesDiscount (healthcare) · PI Foundation (CSR)
+//   MedicinesDiscount (healthcare) · PI Foundation (CSR) · Sukoon @ Sukoon (living/PG)
 //
 // Pushes enriched insights to: KnowledgeHub.ai (Master Core)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -173,12 +173,85 @@ model Leaderboard {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// INGESTED LIVING DATA (from Sukoon @ Sukoon)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model PropertySnapshot {
+  id            String   @id @default(cuid())
+  sukoonId      String   @unique // property ID in Sukoon
+  name          String
+  type          String   // PG, HOSTEL, COLIVING, FLAT_SHARE
+  gender        String   // MALE, FEMALE, UNISEX
+  city          String
+  state         String
+  pincode       String
+  locality      String?
+  totalBeds     Int
+  occupiedBeds  Int      @default(0)
+  avgRent       Float?
+  amenities     Json     // {wifi, ac, parking, laundry, mess, ...}
+  rating        Float    @default(0)
+  reviewCount   Int      @default(0)
+  has365Store   Boolean  @default(false)
+  storeFormat   String?  // VENDING_MACHINE, KIOSK, STORE, etc.
+  ingestedAt    DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  analytics     PropertyAnalytics?
+
+  @@index([city, state])
+  @@index([type, gender])
+}
+
+model PropertyAnalytics {
+  id                    String   @id @default(cuid())
+  propertySnapshotId    String   @unique
+  occupancyRate         Float?   // 0-100
+  occupancyTrend        Json?    // [{month, rate}]
+  avgStayDuration       Float?   // months
+  churnRate             Float?   // monthly tenant turnover %
+  revenueTrend          Json?    // [{month, rent, store365, meals}]
+  mealAdoptionRate      Float?   // % tenants with tiffin subscription
+  store365Revenue       Float?   // monthly 365 Days revenue
+  topSellingProducts    Json?    // [{product, quantity, revenue}]
+  demandScore           Float?   // 0-100, locality demand
+  priceCompetitiveness  Float?   // vs locality average
+  computedAt            DateTime @default(now())
+
+  propertySnapshot PropertySnapshot @relation(fields: [propertySnapshotId], references: [id], onDelete: Cascade)
+}
+
+model CityLivingSnapshot {
+  id              String   @id @default(cuid())
+  city            String
+  state           String
+  totalProperties Int      @default(0)
+  totalBeds       Int      @default(0)
+  occupiedBeds    Int      @default(0)
+  avgRent         Float?
+  avgOccupancy    Float?
+  maleProperties  Int      @default(0)
+  femaleProperties Int     @default(0)
+  pgCount         Int      @default(0)
+  hostelCount     Int      @default(0)
+  colivingCount   Int      @default(0)
+  store365Count   Int      @default(0)
+  totalMealSubs   Int      @default(0)
+  monthlyRevenue  Json?    // {rent, meals, store365, total}
+  topLocalities   Json?    // [{name, properties, avgRent, occupancy}]
+  computedAt      DateTime @default(now())
+
+  @@unique([city, state])
+  @@index([state])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // CROSS-VERTICAL INTELLIGENCE
 // ═══════════════════════════════════════════════════════════════════════════════
 
 model VerticalDataPoint {
   id          String   @id @default(cuid())
-  vertical    String   // thecredit, theequinox, yesbroker, justbuild, legalopinion, curioushat, medicines, pifoundation
+  vertical    String   // thecredit, theequinox, yesbroker, justbuild, legalopinion, curioushat, medicines, pifoundation, sukoon
   entityId    String   // ID in source vertical
   entityType  String   // company, individual, school, property, tender, case
   data        Json     // raw data snapshot
@@ -282,4 +355,136 @@ model OutgestLog {
   error        String?
   createdAt    DateTime  @default(now())
   sentAt       DateTime?
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// WHATSAPP AI AGENT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// A WhatsApp Business Account connected to IQEdge
+model WhatsAppAccount {
+  id                String   @id @default(cuid())
+  phoneNumberId     String   @unique // Meta WhatsApp Business phone number ID
+  displayPhone      String   // e.g. +91-9876543210
+  businessName      String
+  wabaId            String?  // WhatsApp Business Account ID
+  accessToken       String   // Meta Cloud API token (encrypted in production)
+  webhookVerifyToken String  // token for webhook verification
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  conversations     WhatsAppConversation[]
+  agents            WhatsAppAgent[]
+}
+
+// AI Agent definitions — each handles a specific domain
+model WhatsAppAgent {
+  id              String   @id @default(cuid())
+  accountId       String
+  name            String   // e.g. "Lead Qualifier", "Store Compliance", "Support"
+  description     String?
+  systemPrompt    String   // LLM system prompt for this agent's behavior
+  triggerKeywords String[] // keywords that route a message to this agent
+  isDefault       Boolean  @default(false) // fallback agent when no keyword match
+  isActive        Boolean  @default(true)
+  config          Json?    // agent-specific settings (checklist items, scoring rubrics, etc.)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  account         WhatsAppAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  messages        WhatsAppMessage[]
+
+  @@index([accountId])
+}
+
+// A conversation thread with a single WhatsApp user
+model WhatsAppConversation {
+  id              String   @id @default(cuid())
+  accountId       String
+  waUserId        String   // WhatsApp user's phone number (e.g. 919876543210)
+  waUserName      String?  // profile name from WhatsApp
+  contactId       String?  // linked KnowledgeHub contact ID (once matched/created)
+  companyId       String?  // linked company ID (once matched)
+  status          String   @default("active") // active, archived, blocked
+  lastMessageAt   DateTime?
+  unreadCount     Int      @default(0)
+  tags            String[] // user-assigned tags
+  assignedTo      String?  // team member handling this conversation
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  account         WhatsAppAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  messages        WhatsAppMessage[]
+
+  @@unique([accountId, waUserId])
+  @@index([contactId])
+  @@index([status])
+  @@index([lastMessageAt])
+}
+
+// Individual messages in a conversation
+model WhatsAppMessage {
+  id              String   @id @default(cuid())
+  conversationId  String
+  agentId         String?  // which AI agent handled this (null = human/inbound)
+  waMessageId     String?  @unique // WhatsApp's message ID
+  direction       String   // inbound, outbound
+  type            String   // text, image, document, audio, video, location, contact, template
+  body            String?  // text content
+  mediaUrl        String?  // URL for media messages
+  mediaType       String?  // MIME type
+  latitude        Float?   // for location messages
+  longitude       Float?
+  templateName    String?  // for outbound template messages
+  status          String   @default("sent") // sent, delivered, read, failed
+  aiIntent        String?  // detected intent (lead, complaint, query, compliance, etc.)
+  aiConfidence    Float?   // intent detection confidence
+  aiResponse      String?  // AI-generated response (before sending)
+  metadata        Json?    // any extra data (button replies, list selections, etc.)
+  createdAt       DateTime @default(now())
+
+  conversation    WhatsAppConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  agent           WhatsAppAgent? @relation(fields: [agentId], references: [id])
+
+  @@index([conversationId, createdAt])
+  @@index([direction])
+  @@index([aiIntent])
+}
+
+// Contact enrichment queue — tracks enrichment status per contact
+model EnrichmentTask {
+  id              String   @id @default(cuid())
+  contactId       String   // KnowledgeHub contact ID
+  source          String   // whatsapp, gbp, manual, bulk
+  phone           String?
+  email           String?
+  name            String?
+  status          String   @default("pending") // pending, processing, completed, failed
+  enrichments     Json?    // results: {google: {...}, whatsapp: {...}, linkedin: {...}, gbp: {...}}
+  matchedRecords  Json?    // IDs of matched records across tables
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+
+  @@index([status])
+  @@index([phone])
+  @@index([email])
+}
+
+// WhatsApp message templates (pre-approved by Meta)
+model WhatsAppTemplate {
+  id              String   @id @default(cuid())
+  accountId       String
+  name            String   // template name registered with Meta
+  language        String   @default("en")
+  category        String   // MARKETING, UTILITY, AUTHENTICATION
+  headerType      String?  // TEXT, IMAGE, VIDEO, DOCUMENT
+  headerContent   String?
+  bodyText        String   // template body with {{1}}, {{2}} placeholders
+  footerText      String?
+  buttons         Json?    // [{type: "QUICK_REPLY"|"URL", text, url?}]
+  status          String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt       DateTime @default(now())
+
+  @@unique([accountId, name, language])
 }

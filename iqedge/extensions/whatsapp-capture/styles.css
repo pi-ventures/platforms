@@ -1,0 +1,232 @@
+/* IQEdge WhatsApp Capture Extension Styles */
+
+.iqedge-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #075e54;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 99999;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.iqedge-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.iqedge-fab-icon {
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -1px;
+}
+
+/* Panel */
+.iqedge-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 100000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.iqedge-panel-header {
+  background: #075e54;
+  color: #fff;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.iqedge-close {
+  cursor: pointer;
+  font-size: 22px;
+  opacity: 0.8;
+}
+
+.iqedge-close:hover {
+  opacity: 1;
+}
+
+.iqedge-panel-body {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.iqedge-field {
+  margin-bottom: 12px;
+}
+
+.iqedge-field label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.iqedge-field input,
+.iqedge-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.iqedge-field input:focus,
+.iqedge-field textarea:focus {
+  border-color: #075e54;
+}
+
+.iqedge-info {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.iqedge-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.iqedge-btn-search {
+  flex: 1;
+  padding: 10px;
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.iqedge-btn-search:hover {
+  background: #e0e0e0;
+}
+
+.iqedge-btn-save {
+  flex: 1;
+  padding: 10px;
+  background: #075e54;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.iqedge-btn-save:hover {
+  background: #064e46;
+}
+
+/* Search Results */
+.iqedge-results {
+  margin-top: 12px;
+}
+
+.iqedge-result-item {
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.iqedge-result-item strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.iqedge-result-item div {
+  color: #666;
+  font-size: 12px;
+}
+
+.iqedge-source {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10px;
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.iqedge-loading {
+  text-align: center;
+  padding: 12px;
+  color: #075e54;
+  font-size: 13px;
+}
+
+.iqedge-no-results {
+  text-align: center;
+  padding: 12px;
+  color: #888;
+  font-size: 13px;
+}
+
+.iqedge-error {
+  text-align: center;
+  padding: 12px;
+  color: #d32f2f;
+  font-size: 13px;
+}
+
+/* Toast Notification */
+.iqedge-toast {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 100001;
+  animation: iqedge-slide-in 0.3s ease;
+}
+
+.iqedge-toast-success {
+  background: #2e7d32;
+}
+
+.iqedge-toast-error {
+  background: #d32f2f;
+}
+
+@keyframes iqedge-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
