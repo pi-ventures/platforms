@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   // Get attendance
   const attendance = await prisma.attendance.findMany({ where: { studentId } })
   const total = attendance.length
-  const present = attendance.filter(a => a.status === 'PRESENT').length
+  const present = attendance.filter((a: any) => a.status === 'PRESENT').length
 
   // Build payload
   const payload = {
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       state: student.school.state,
       pincode: student.pincode || '',
     },
-    scores: student.scores.map(s => ({
+    scores: student.scores.map((s: any) => ({
       subject: s.subject.subjectName,
       examType: s.examType,
       marksObtained: s.marksObtained,
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     } : {
       overallPercent: 0, strengthMap: {}, weaknessAreas: [], aiCareerRecommendations: [], isShareable: false,
     },
-    entranceExamPrep: student.entranceExamPrep.map(e => ({
+    entranceExamPrep: student.entranceExamPrep.map((e: any) => ({
       examName: e.examName,
       targetYear: e.targetYear,
       mocksTaken: e.mocksTaken,

@@ -1,12 +1,13 @@
 'use client'
 import DashboardShell from '@/components/dashboard/DashboardShell'
-import { LayoutDashboard, TrendingUp, DollarSign, Bell, MessageSquare, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, TrendingUp, DollarSign, Bell, MessageSquare, ClipboardList, Languages } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard/parent', icon: LayoutDashboard },
   { label: 'Academic Progress', href: '/dashboard/parent/progress', icon: TrendingUp },
   { label: 'Fees & Payments', href: '/dashboard/parent/fees', icon: DollarSign },
   { label: 'Attendance', href: '/dashboard/parent/attendance', icon: ClipboardList },
+  { label: 'Learn Languages', href: '/dashboard/parent/learn-languages', icon: Languages },
   { label: 'Announcements', href: '/dashboard/parent/announcements', icon: Bell },
   { label: 'Message Teacher', href: '/dashboard/parent/messages', icon: MessageSquare },
 ]

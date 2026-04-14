@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Font loaded via next/font/google in layout.tsx — no render-blocking @import */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,7 +19,7 @@ html {
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-start-rgb));
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: inherit; /* Inherited from next/font/google in layout.tsx */
   -webkit-font-smoothing: antialiased;
 }
 

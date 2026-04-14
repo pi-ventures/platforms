@@ -365,7 +365,7 @@ export default function AITutorPanel({ book, onClose, enabled, role = 'student' 
                 {selectMode === 'freehand' ? 'Draw freehand around your area · release to crop' : 'Drag to select · release to crop'}
               </p>
             </div>
-            <button onClick={() => { setScreenSelectOpen(false); setScreenshot(null); setDragStart(null); setDragCurrent(null); setSelection(null); setFreehandPoints([]) }}
+            <button onClick={() => { setScreenSelectOpen(false); setScreenshot(null); setDragStart(null); setDragCurrent(null); setSelection(null); freehandPointsRef.current = [] }}
               className="p-1.5 hover:bg-white/10 rounded-lg"><X className="w-4 h-4" /></button>
           </div>
           <div

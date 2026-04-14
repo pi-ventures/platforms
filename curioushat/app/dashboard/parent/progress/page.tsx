@@ -1,8 +1,8 @@
 'use client'
-import { useState } from 'react'
-import { TrendingUp, TrendingDown, Award, BarChart3, BookOpen } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { TrendingUp, TrendingDown, Award, BarChart3, BookOpen, Database } from 'lucide-react'
 
-const subjects = [
+const MOCK_SUBJECTS = [
   { name: 'Mathematics', teacher: 'Mr. Sharma', marks: [82, 78, 88, 92, 85], avg: 85, grade: 'A', trend: +3 },
   { name: 'Physics', teacher: 'Ms. Gupta', marks: [74, 80, 76, 85, 79], avg: 79, grade: 'B+', trend: +5 },
   { name: 'Chemistry', teacher: 'Mr. Iyer', marks: [88, 85, 90, 92, 89], avg: 89, grade: 'A+', trend: +1 },
@@ -11,7 +11,7 @@ const subjects = [
   { name: 'History', teacher: 'Mr. Raghuvanshi', marks: [78, 80, 82, 85, 81], avg: 81, grade: 'A-', trend: +3 },
 ]
 
-const exams = ['UT1', 'UT2', 'Mid-Term', 'UT3', 'Pre-Board']
+const MOCK_EXAMS = ['UT1', 'UT2', 'Mid-Term', 'UT3', 'Pre-Board']
 
 const gradeColor = (g: string) => {
   if (g.startsWith('A')) return 'bg-emerald-100 text-emerald-700'
@@ -30,6 +30,31 @@ const aiInsights: Record<string, string> = {
 
 export default function ParentProgressPage() {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null)
+  const [subjects, setSubjects] = useState(MOCK_SUBJECTS)
+  const [exams, setExams] = useState(MOCK_EXAMS)
+  const [source, setSource] = useState<'db' | 'mock'>('mock')
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const lookupRes = await fetch('/api/students/lookup?roll=1')
+        if (!lookupRes.ok) throw new Error('lookup failed')
+        const { id } = await lookupRes.json()
+        const scoresRes = await fetch(`/api/students/${id}/scores`)
+        if (!scoresRes.ok) throw new Error('scores fetch failed')
+        const data = await scoresRes.json()
+        if (data.subjects && Array.isArray(data.subjects) && data.subjects.length > 0) {
+          setSubjects(data.subjects)
+          if (data.exams) setExams(data.exams)
+          setSource('db')
+        }
+      } catch {
+        // Fall back to mock data (already set as default)
+      }
+    }
+    load()
+  }, [])
+
   const overall = Math.round(subjects.reduce((acc, s) => acc + s.avg, 0) / subjects.length)
   const bestSubject = subjects.reduce((best, s) => s.avg > best.avg ? s : best)
   const needsAttention = subjects.reduce((worst, s) => s.avg < worst.avg ? s : worst)

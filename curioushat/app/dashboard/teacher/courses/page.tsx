@@ -1,10 +1,30 @@
 'use client'
-import { useState } from 'react'
-import { BookOpen, Users, Plus, ChevronDown, ChevronUp, Edit3, Upload, Eye, CheckCircle2, Circle } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { BookOpen, Users, Plus, ChevronDown, ChevronUp, Edit3, Upload, Eye, CheckCircle2, Circle, Loader2, Database } from 'lucide-react'
 
-const courses = [
+interface Chapter {
+  title: string
+  published: boolean
+  resources: number
+}
+
+interface CourseItem {
+  id: string | number
+  subject: string
+  class: string
+  code: string
+  color: string
+  emoji: string
+  students: number
+  chaptersCreated: number
+  totalChapters: number
+  lastUpdated: string
+  chapters: Chapter[]
+}
+
+const mockCourses: CourseItem[] = [
   {
-    id: 1, subject: 'Physics', class: 'Class XI – A', code: 'PHY11A', color: '#0891B2', emoji: '⚛',
+    id: 1, subject: 'Physics', class: 'Class XI \u2013 A', code: 'PHY11A', color: '#0891B2', emoji: '\u269B',
     students: 42, chaptersCreated: 6, totalChapters: 10, lastUpdated: '2 days ago',
     chapters: [
       { title: 'Physical World', published: true, resources: 3 },
@@ -20,7 +40,7 @@ const courses = [
     ]
   },
   {
-    id: 2, subject: 'Physics', class: 'Class XI – B', code: 'PHY11B', color: '#0891B2', emoji: '⚛',
+    id: 2, subject: 'Physics', class: 'Class XI \u2013 B', code: 'PHY11B', color: '#0891B2', emoji: '\u269B',
     students: 38, chaptersCreated: 5, totalChapters: 10, lastUpdated: '3 days ago',
     chapters: [
       { title: 'Physical World', published: true, resources: 3 },
@@ -36,7 +56,7 @@ const courses = [
     ]
   },
   {
-    id: 3, subject: 'Physics', class: 'Class XII – A', code: 'PHY12A', color: '#0891B2', emoji: '⚛',
+    id: 3, subject: 'Physics', class: 'Class XII \u2013 A', code: 'PHY12A', color: '#0891B2', emoji: '\u269B',
     students: 44, chaptersCreated: 8, totalChapters: 13, lastUpdated: 'Today',
     chapters: [
       { title: 'Electric Charges and Fields', published: true, resources: 5 },
@@ -56,10 +76,72 @@ const courses = [
   },
 ]
 
+const COLORS = ['#0891B2', '#7C3AED', '#059669', '#DC2626', '#D97706', '#2563EB']
+
 export default function TeacherCoursesPage() {
-  const [expanded, setExpanded] = useState<number | null>(null)
-  const [adding, setAdding] = useState<number | null>(null)
+  const [courses, setCourses] = useState<CourseItem[]>([])
+  const [expanded, setExpanded] = useState<string | number | null>(null)
+  const [adding, setAdding] = useState<string | number | null>(null)
   const [newChapter, setNewChapter] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [source, setSource] = useState<'db' | 'mock'>('mock')
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch('/api/courses')
+        if (!res.ok) throw new Error('Failed')
+        const data = await res.json()
+
+        if (data.courses && data.courses.length > 0) {
+          const mapped: CourseItem[] = data.courses.map((c: any, i: number) => {
+            const chapters: Chapter[] = Array.isArray(c.chapters)
+              ? c.chapters.map((ch: any) => ({
+                  title: typeof ch === 'string' ? ch : ch.title || ch.name || 'Untitled',
+                  published: typeof ch === 'string' ? false : (ch.published ?? ch.isPublished ?? false),
+                  resources: typeof ch === 'string' ? 0 : (ch.resources ?? ch.resourceCount ?? 0),
+                }))
+              : []
+
+            const publishedCount = chapters.filter(ch => ch.published).length
+
+            return {
+              id: c.id,
+              subject: c.subject || c.title || 'Unknown',
+              class: c.classLevel ? `Class ${c.classLevel}` : 'All Classes',
+              code: c.id.slice(0, 6).toUpperCase(),
+              color: COLORS[i % COLORS.length],
+              emoji: '\uD83D\uDCDA',
+              students: c.enrollmentCount || 0,
+              chaptersCreated: publishedCount,
+              totalChapters: chapters.length || 1,
+              lastUpdated: c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('en-IN') : 'Unknown',
+              chapters,
+            }
+          })
+          setCourses(mapped)
+          setSource('db')
+        } else {
+          throw new Error('No courses')
+        }
+      } catch {
+        setCourses(mockCourses)
+        setSource('mock')
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-6 h-6 text-violet-600 animate-spin" />
+        <span className="ml-2 text-gray-500">Loading courses...</span>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -68,9 +150,15 @@ export default function TeacherCoursesPage() {
           <h1 className="text-2xl font-black text-gray-900">My Courses</h1>
           <p className="text-gray-500 mt-1 text-sm">Manage chapters and resources for your classes</p>
         </div>
-        <button className="flex items-center gap-1.5 text-sm bg-violet-600 text-white px-4 py-2 rounded-xl hover:bg-violet-700 transition-colors">
-          <Plus className="w-4 h-4" /> New Course
-        </button>
+        <div className="flex items-center gap-3">
+          <span className={`flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full ${source === 'db' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+            <Database className="w-3 h-3" />
+            {source === 'db' ? 'Live' : 'Mock'}
+          </span>
+          <button className="flex items-center gap-1.5 text-sm bg-violet-600 text-white px-4 py-2 rounded-xl hover:bg-violet-700 transition-colors">
+            <Plus className="w-4 h-4" /> New Course
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -141,7 +229,7 @@ export default function TeacherCoursesPage() {
                       <input
                         value={newChapter}
                         onChange={e => setNewChapter(e.target.value)}
-                        placeholder="Chapter title…"
+                        placeholder="Chapter title\u2026"
                         className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-violet-500 outline-none"
                       />
                       <button className="bg-violet-600 text-white text-xs px-3 rounded-lg hover:bg-violet-700">Add</button>

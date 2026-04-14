@@ -1,50 +1,34 @@
-import Link from 'next/link'
-import { CheckCircle2, X } from 'lucide-react'
+'use client'
 
-const plans = [
+import { useState } from 'react'
+import Link from 'next/link'
+import { CheckCircle2 } from 'lucide-react'
+
+const pricingPlans = [
   {
-    name: 'Starter',
-    price: '₹2,999',
-    period: '/month',
-    annual: '₹2,399/mo billed annually',
-    desc: 'Perfect for small schools and coaching centres just getting started with AI.',
-    students: 'Up to 200 students',
-    highlighted: false,
-    features: {
-      'AI Features': ['AI Tutoring (Image Q&A)', 'AI Exam Generator (10/day)', false, false],
-      'School Management': ['Attendance Management', 'Basic Timetable', false, 'Basic Fee Collection', false, false, false],
-      'Support': ['Email Support', false, false],
-    },
-    featureList: ['200 students', 'AI Tutoring', 'Exam Generator (10/day)', 'Attendance', 'Basic Timetable', 'Basic Fee Collection', 'Email support'],
-    cta: 'Start Free Trial',
-    ctaHref: '/signup',
+    name: 'Individual', monthlyPrice: 2000,
+    desc: 'For students and parents learning at their own pace',
+    features: ['FREE upto grade 5', 'AI Tutoring', 'Exam Generator'],
+    cta: 'Start Free Trial', ctaHref: '/signup', highlighted: false,
   },
   {
-    name: 'Growth',
-    price: '₹7,999',
-    period: '/month',
-    annual: '₹6,399/mo billed annually',
-    desc: 'The full AI stack for growing schools that want to automate everything.',
-    students: 'Up to 1,000 students',
-    highlighted: true,
-    badge: 'Most Popular',
-    featureList: ['1,000 students', 'Everything in Starter', 'OCR Answer Grading', 'Parent Portal', 'Full Gradebook & Reports', 'Admissions Module', 'Staff & HR', 'WhatsApp Notifications', 'Priority Support'],
-    cta: 'Start Free Trial',
-    ctaHref: '/signup',
+    name: 'Institutional', monthlyPrice: 1800,
+    desc: 'Perfect for small schools getting started with AI',
+    features: ['FREE upto grade 5', 'Up to 200 students', 'AI Tutoring', 'Exam Generator', 'Basic Attendance', 'Email Support'],
+    cta: 'Start Free Trial', ctaHref: '/signup', highlighted: false,
   },
   {
-    name: 'Enterprise',
-    price: 'Custom',
-    period: '',
-    annual: 'Volume discounts available',
-    desc: 'For large school chains, trusts, and education boards with complex requirements.',
-    students: 'Unlimited students',
-    highlighted: false,
-    featureList: ['Unlimited students & schools', 'Everything in Growth', 'Multi-school management', 'Custom AI model fine-tuning', 'SSO & Active Directory', 'Dedicated Customer Success', 'SLA guarantee', 'On-premise deployment option', 'Custom integrations & API'],
-    cta: 'Contact Sales',
-    ctaHref: '/contact',
+    name: 'Institutional +', monthlyPrice: 1500,
+    desc: 'For growing institutions that want the full AI stack',
+    features: ['FREE upto grade 5', 'Up to 1,000 students', 'Everything in Institutional', 'OCR Grading', 'Parent Portal', 'Gradebook & Reports', 'Priority Support'],
+    cta: 'Start Free Trial', ctaHref: '/signup', highlighted: true,
   },
 ]
+
+function formatPrice(monthly: number, billing: 'monthly' | 'annual') {
+  const price = billing === 'annual' ? Math.round(monthly * 0.9) : monthly
+  return '\u20B9' + price.toLocaleString('en-IN')
+}
 
 const faqItems = [
   {
@@ -70,47 +54,73 @@ const faqItems = [
 ]
 
 export default function PricingPage() {
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
+
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gray-50 py-20 text-center">
+      <section className="bg-gray-50 py-16 sm:py-20 text-center">
         <div className="max-w-3xl mx-auto px-4">
-          <h1 className="text-5xl font-black text-gray-900 mb-4">Simple, transparent pricing</h1>
-          <p className="text-xl text-gray-600 mb-2">Start free. Scale as you grow. No hidden fees.</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3">
+            @ less than your monthly house-helper cost
+          </h1>
+          <p className="text-base sm:text-lg text-gray-500 mb-2">Start free. Scale as you grow. No hidden fees.</p>
           <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 text-sm font-semibold px-4 py-2 rounded-full mt-4">
-            ✅ 14-day free trial • No credit card required
+            14-day free trial &middot; No credit card required
+          </div>
+
+          <div className="flex justify-center mt-6">
+            <div className="inline-flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1">
+              <button
+                onClick={() => setBilling('monthly')}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${billing === 'monthly' ? 'bg-violet-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBilling('annual')}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${billing === 'annual' ? 'bg-violet-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                Annual
+                <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${billing === 'annual' ? 'bg-white text-violet-600' : 'bg-green-100 text-green-700'}`}>
+                  &minus;10%
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Plans */}
       <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            {plans.map(plan => (
-              <div key={plan.name} className={`relative rounded-2xl p-8 border-2 ${plan.highlighted ? 'border-indigo-600 bg-gradient-to-br from-indigo-600 to-purple-700 text-white shadow-2xl shadow-indigo-200 md:-translate-y-4' : 'border-gray-100 bg-white'} transition-all`}>
-                {plan.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
-                    {plan.badge}
-                  </span>
-                )}
-                <h3 className={`text-xl font-bold mb-1 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>{plan.name}</h3>
-                <p className={`text-sm mb-4 ${plan.highlighted ? 'text-indigo-200' : 'text-gray-500'}`}>{plan.desc}</p>
-                <div className={`text-4xl font-black mb-1 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
-                  {plan.price}
-                  <span className={`text-base font-normal ${plan.highlighted ? 'text-indigo-300' : 'text-gray-400'}`}>{plan.period}</span>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {pricingPlans.map(plan => (
+              <div key={plan.name} className={`relative rounded-xl p-5 sm:p-7 border-2 transition-all flex flex-col ${plan.highlighted ? 'border-violet-600 bg-violet-600 text-white shadow-lg' : 'border-gray-200 bg-white hover:border-violet-200'}`}>
+                <h3 className={`text-base sm:text-lg font-bold mb-1 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>{plan.name}</h3>
+                <p className={`text-xs sm:text-sm mb-3 sm:mb-4 ${plan.highlighted ? 'text-violet-200' : 'text-gray-500'}`}>{plan.desc}</p>
+                <div className={`mb-1 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
+                  <span className="text-3xl sm:text-4xl font-black">{formatPrice(plan.monthlyPrice, billing)}</span>
+                  <span className={`text-xs sm:text-sm font-normal ml-1 ${plan.highlighted ? 'text-violet-300' : 'text-gray-400'}`}>/student/mo</span>
                 </div>
-                <p className={`text-xs mb-6 ${plan.highlighted ? 'text-indigo-300' : 'text-gray-400'}`}>{plan.annual}</p>
-                <div className={`text-sm font-semibold mb-4 ${plan.highlighted ? 'text-indigo-200' : 'text-indigo-600'}`}>{plan.students}</div>
-                <ul className="space-y-2.5 mb-8">
-                  {plan.featureList.map(f => (
-                    <li key={f} className="flex items-start gap-2 text-sm">
-                      <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.highlighted ? 'text-indigo-200' : 'text-emerald-500'}`} />
-                      <span className={plan.highlighted ? 'text-indigo-100' : 'text-gray-700'}>{f}</span>
+                {billing === 'annual' && (
+                  <p className={`text-xs mb-4 ${plan.highlighted ? 'text-violet-200' : 'text-green-600'}`}>
+                    Billed annually &middot; save {Math.round(plan.monthlyPrice * 0.1 * 12).toLocaleString('en-IN')} &#8377;/student/yr
+                  </p>
+                )}
+                {billing === 'monthly' && <div className="mb-4" />}
+                <ul className="space-y-2.5 mb-7 flex-1">
+                  {plan.features.map(f => (
+                    <li key={f} className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${plan.highlighted ? 'text-violet-200' : 'text-violet-400'}`} />
+                      <span className={plan.highlighted ? 'text-violet-100' : 'text-gray-700'}>{f}</span>
                     </li>
                   ))}
                 </ul>
-                <Link href={plan.ctaHref} className={`block text-center font-bold py-3.5 rounded-xl transition-all ${plan.highlighted ? 'bg-white text-indigo-700 hover:bg-indigo-50' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}>
+                <Link
+                  href={plan.ctaHref}
+                  className={`mt-auto block text-center font-semibold py-3 rounded-xl transition-all text-sm ${plan.highlighted ? 'bg-white text-violet-600 hover:bg-violet-50' : 'bg-violet-600 text-white hover:bg-violet-700'}`}
+                >
                   {plan.cta}
                 </Link>
               </div>
@@ -120,9 +130,9 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-3xl font-black text-gray-900 text-center mb-12">Frequently Asked Questions</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 text-center mb-10 sm:mb-12">Frequently Asked Questions</h2>
           <div className="space-y-4">
             {faqItems.map(faq => (
               <div key={faq.q} className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
@@ -135,12 +145,12 @@ export default function PricingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 text-center bg-white">
-        <h2 className="text-3xl font-black text-gray-900 mb-4">Still have questions?</h2>
-        <p className="text-gray-600 mb-8">Our team is happy to help you find the right plan for your school.</p>
+      <section className="py-12 sm:py-16 text-center bg-white">
+        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4">Still have questions?</h2>
+        <p className="text-gray-500 mb-8">Our team is happy to help you find the right plan for your school.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/contact" className="inline-block border-2 border-indigo-600 text-indigo-600 font-bold px-8 py-3.5 rounded-xl hover:bg-indigo-50 transition-colors">Talk to Sales</Link>
-          <Link href="/signup" className="inline-block bg-indigo-600 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-indigo-700 transition-colors">Start Free Trial</Link>
+          <Link href="/contact" className="inline-block border-2 border-violet-600 text-violet-600 font-semibold px-8 py-3 rounded-xl hover:bg-violet-50 transition-colors">Talk to Sales</Link>
+          <Link href="/signup" className="inline-block bg-violet-600 text-white font-semibold px-8 py-3 rounded-xl hover:bg-violet-700 transition-colors">Start Free Trial</Link>
         </div>
       </section>
     </div>

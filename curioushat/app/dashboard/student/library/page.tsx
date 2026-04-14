@@ -1,9 +1,11 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Search, BookOpen, Download, Eye, X, ChevronRight, SlidersHorizontal, LayoutGrid, List, Brain, Headphones, Sparkles, Award, Languages } from 'lucide-react'
-import AITutorPanel, { type Book as TutorBook } from '@/components/dashboard/AITutorPanel'
-import AudioBookPlayer from '@/components/dashboard/AudioBookPlayer'
-import EpubReader from '@/components/dashboard/EpubReader'
+import dynamic from 'next/dynamic'
+import type { Book as TutorBook } from '@/components/dashboard/AITutorPanel'
+const AITutorPanel = dynamic(() => import('@/components/dashboard/AITutorPanel'), { ssr: false })
+const AudioBookPlayer = dynamic(() => import('@/components/dashboard/AudioBookPlayer'), { ssr: false })
+const EpubReader = dynamic(() => import('@/components/dashboard/EpubReader'), { ssr: false })
 import { DOMAINS, BROWSE_DATA, ALL_BOOKS, RESOURCE_TYPES, CONTENT_PROVIDERS, SUBJECT_COLORS, SUBJECT_ICONS, subjectColor, LANGUAGE_ZONES } from '@/lib/library-data'
 import { generateMockProcessedBook } from '@/lib/book-pipeline'
 import { SAMPLE_BOOK } from '@/lib/sample-book'
@@ -182,6 +184,8 @@ function BrowsePanel({
 
 /* ─── Main component ─── */
 export default function StudentLibraryPage() {
+  const [books, setBooks] = useState(ALL_BOOKS)
+  const [source, setSource] = useState<'db' | 'mock'>('mock')
   const [domain, setDomain] = useState('School Education')
   const [browseMode, setBrowseMode] = useState(false)
   const [search, setSearch] = useState('')
@@ -194,23 +198,41 @@ export default function StudentLibraryPage() {
   const [expandedSubject, setExpandedSubject] = useState<string | null>(null)
   const [expandedLevel, setExpandedLevel] = useState<string | null>(null)
 
+  useEffect(() => {
+    async function loadBooks() {
+      try {
+        const res = await fetch('/api/books?page=1&limit=100')
+        if (!res.ok) throw new Error('books fetch failed')
+        const data = await res.json()
+        const fetched = Array.isArray(data) ? data : data.books
+        if (fetched && fetched.length > 0) {
+          setBooks(fetched)
+          setSource('db')
+        }
+      } catch {
+        // Fall back to ALL_BOOKS (already set as default)
+      }
+    }
+    loadBooks()
+  }, [])
+
   const langsBySubject = useMemo(() => {
     const map: Record<string, string[]> = {}
-    ALL_BOOKS.forEach(b => {
+    books.forEach(b => {
       if (!map[b.subject]) map[b.subject] = []
       if (!map[b.subject].includes(b.lang)) map[b.subject].push(b.lang)
     })
     return map
-  }, [])
+  }, [books])
 
   const langsByClass = useMemo(() => {
     const map: Record<string, string[]> = {}
-    ALL_BOOKS.forEach(b => {
+    books.forEach(b => {
       if (!map[b.class]) map[b.class] = []
       if (!map[b.class].includes(b.lang)) map[b.class].push(b.lang)
     })
     return map
-  }, [])
+  }, [books])
 
   const setFilter = (k: keyof typeof filters, v: string) => {
     setFilters(f => ({ ...f, [k]: f[k] === v ? '' : v }))
@@ -229,7 +251,7 @@ export default function StudentLibraryPage() {
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length + (search ? 1 : 0)
 
-  const filtered = ALL_BOOKS.filter(b => {
+  const filtered = books.filter(b => {
     if (search && !b.title.toLowerCase().includes(search.toLowerCase()) && !b.subject.toLowerCase().includes(search.toLowerCase())) return false
     if (filters.subject && b.subject !== filters.subject) return false
     if (filters.level && b.class !== filters.level) return false

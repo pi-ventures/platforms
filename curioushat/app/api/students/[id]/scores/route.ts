@@ -52,14 +52,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   // Calculate averages
   for (const subj of Object.values(bySubject)) {
-    const avg = subj.exams.reduce((a, e) => a + e.pct, 0) / subj.exams.length
+    const avg = subj.exams.reduce((a: any, e: any) => a + e.pct, 0) / subj.exams.length
     subj.avg = Math.round(avg * 10) / 10
     subj.overallGrade = avg >= 90 ? 'A+' : avg >= 80 ? 'A' : avg >= 70 ? 'B+' : avg >= 60 ? 'B' : avg >= 50 ? 'C' : avg >= 40 ? 'D' : 'F'
   }
 
   const subjects = Object.values(bySubject)
   const overall = subjects.length > 0
-    ? Math.round(subjects.reduce((a, s) => a + s.avg, 0) / subjects.length)
+    ? Math.round(subjects.reduce((a: any, s: any) => a + s.avg, 0) / subjects.length)
     : 0
 
   return NextResponse.json({ studentId: student.id, academicYear: year, subjects, overall })

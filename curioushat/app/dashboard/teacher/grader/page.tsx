@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef } from 'react'
-import { ScanLine, Upload, Loader2, CheckCircle2, AlertCircle, ImageIcon, X } from 'lucide-react'
+import { ScanLine, Loader2, CheckCircle2, AlertCircle, ImageIcon, X } from 'lucide-react'
 
 interface GradingResult {
   studentName: string
@@ -11,16 +11,25 @@ interface GradingResult {
   questions: { no: number; question: string; studentAnswer: string; modelAnswer: string; marksAwarded: number; maxMarks: number; feedback: string }[]
 }
 
+const STEPS = ['Scanning answer sheets...', 'Reading handwriting (OCR)...', 'Comparing with model answers...', 'Calculating marks...']
+
 export default function AnswerGraderPage() {
   const [images, setImages] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState(0)
   const [results, setResults] = useState<GradingResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [meta, setMeta] = useState<{ gradingTime?: string; tokensUsed?: number } | null>(null)
   const [modelAnswer, setModelAnswer] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     files.forEach(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        setError(`File "${file.name}" is too large (max 10MB). Please compress or resize.`)
+        return
+      }
       const reader = new FileReader()
       reader.onload = ev => setImages(prev => [...prev, ev.target?.result as string])
       reader.readAsDataURL(file)
@@ -29,21 +38,43 @@ export default function AnswerGraderPage() {
 
   const grade = async () => {
     setLoading(true)
-    await new Promise(r => setTimeout(r, 3000))
-    setResults({
-      studentName: 'Om Aditya Raghuvanshi',
-      totalMarks: 32,
-      maxMarks: 40,
-      percentage: 80,
-      grade: 'A',
-      questions: [
-        { no: 1, question: 'Define electric current and state its SI unit.', studentAnswer: 'Electric current is the flow of electrons. SI unit is ampere.', modelAnswer: 'Rate of flow of electric charge. SI unit: Ampere (A). I = Q/t', marksAwarded: 2, maxMarks: 2, feedback: 'Correct definition and unit. Well done!' },
-        { no: 2, question: "State Ohm's Law.", studentAnswer: "Ohm's law says current is proportional to voltage. V = IR", modelAnswer: "At constant temperature, current is directly proportional to potential difference. V = IR", marksAwarded: 2, maxMarks: 3, feedback: "Good understanding but didn't mention 'at constant temperature' — always include this condition." },
-        { no: 3, question: 'Calculate resistance when V=12V, I=0.5A', studentAnswer: 'R = V/I = 12/0.5 = 24 ohm', modelAnswer: 'R = V/I = 12/0.5 = 24 Ω', marksAwarded: 3, maxMarks: 3, feedback: 'Perfect calculation with correct formula and working shown.' },
-        { no: 4, question: 'Explain the heating effect of current with 2 applications.', studentAnswer: 'When current flows through resistance, heat is produced = I²Rt. Used in heaters and electric irons.', modelAnswer: 'Joule\'s heating effect: H = I²Rt. Applications: (1) Electric iron (2) Electric heater (3) Fuse wire', marksAwarded: 4, maxMarks: 5, feedback: 'Good answer with correct formula. Could have named one more application (fuse wire) for full marks.' },
-      ]
-    })
-    setLoading(false)
+    setError(null)
+    setResults(null)
+    setMeta(null)
+    setStep(0)
+
+    const interval = setInterval(() => {
+      setStep(s => Math.min(s + 1, STEPS.length - 1))
+    }, 5000)
+
+    try {
+      const res = await fetch('/api/exam/grade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images, modelAnswer }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to grade answer sheets')
+      }
+
+      setResults({
+        studentName: data.studentName,
+        totalMarks: data.totalMarks,
+        maxMarks: data.maxMarks,
+        percentage: data.percentage,
+        grade: data.grade,
+        questions: data.questions,
+      })
+      setMeta({ gradingTime: data.gradingTime, tokensUsed: data.tokensUsed })
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.')
+    } finally {
+      clearInterval(interval)
+      setLoading(false)
+    }
   }
 
   const gradeColor = (g: string) => {
@@ -61,6 +92,14 @@ export default function AnswerGraderPage() {
         <p className="text-gray-500 mt-1">Upload scanned answer sheets — Claude Vision reads handwriting and grades each answer semantically</p>
       </div>
 
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-5 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+          <p className="text-red-800 text-sm">{error}</p>
+          <button onClick={() => setError(null)} className="ml-auto"><X className="w-4 h-4 text-red-400" /></button>
+        </div>
+      )}
+
       {!results ? (
         <div className="space-y-5">
           {/* Upload Zone */}
@@ -75,7 +114,7 @@ export default function AnswerGraderPage() {
                 <ImageIcon className="w-7 h-7 text-teal-600" />
               </div>
               <p className="text-gray-700 font-medium mb-1">Click to upload answer sheet photos</p>
-              <p className="text-xs text-gray-400">Supports JPG, PNG, PDF. Handwritten or printed.</p>
+              <p className="text-xs text-gray-400">Supports JPG, PNG. Handwritten or printed. Max 10MB per image.</p>
             </div>
 
             {images.length > 0 && (
@@ -103,6 +142,26 @@ export default function AnswerGraderPage() {
             />
           </div>
 
+          {/* Loading progress */}
+          {loading && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <div className="space-y-3">
+                {STEPS.map((s, i) => (
+                  <div key={s} className={`flex items-center gap-3 text-sm transition-all ${i <= step ? 'text-teal-700 font-medium' : 'text-gray-300'}`}>
+                    {i < step ? (
+                      <div className="w-5 h-5 rounded-full bg-teal-600 flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>
+                    ) : i === step ? (
+                      <Loader2 className="w-5 h-5 animate-spin text-teal-600" />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full border-2 border-gray-200" />
+                    )}
+                    {s}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <button onClick={grade} disabled={loading || images.length === 0} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold py-3.5 rounded-xl disabled:opacity-50 hover:shadow-lg transition-all">
             {loading ? <><Loader2 className="w-5 h-5 animate-spin" />Grading with Claude Vision...</> : <><ScanLine className="w-5 h-5" />Grade Answer Sheets</>}
           </button>
@@ -114,7 +173,10 @@ export default function AnswerGraderPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-black">{results.studentName}</h2>
-                <p className="text-teal-200 text-sm mt-1">Grading complete via Claude Vision OCR</p>
+                <p className="text-teal-200 text-sm mt-1">
+                  Graded via Claude Vision OCR
+                  {meta?.gradingTime && ` in ${meta.gradingTime}s`}
+                </p>
               </div>
               <div className="text-right">
                 <div className="text-5xl font-black">{results.totalMarks}<span className="text-2xl text-teal-300">/{results.maxMarks}</span></div>
@@ -130,7 +192,7 @@ export default function AnswerGraderPage() {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <h2 className="font-bold text-gray-900">Question-by-Question Breakdown</h2>
-              <button onClick={() => { setResults(null); setImages([]) }} className="text-sm text-indigo-600 hover:underline">Grade another</button>
+              <button onClick={() => { setResults(null); setMeta(null); setImages([]) }} className="text-sm text-indigo-600 hover:underline">Grade another</button>
             </div>
             <div className="divide-y divide-gray-50">
               {results.questions.map(q => (
@@ -148,7 +210,7 @@ export default function AnswerGraderPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 text-xs">
                     <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="font-semibold text-gray-500 mb-1">Student's Answer (OCR)</p>
+                      <p className="font-semibold text-gray-500 mb-1">Student&apos;s Answer (OCR)</p>
                       <p className="text-gray-700 italic">{q.studentAnswer}</p>
                     </div>
                     <div className="bg-emerald-50 rounded-lg p-3">

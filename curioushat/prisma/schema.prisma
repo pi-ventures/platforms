@@ -83,13 +83,16 @@ model Session {
 
 model School {
   id            String     @id @default(cuid())
+  slug          String     @unique            // jiva → jiva.curioushat.ai
   name          String
   type          SchoolType
   board         String
   udiseCode     String?    @unique
-  affiliationNo String?
+  affiliationNo String?    @unique            // CBSE affiliation number
+  cbseSchoolCode String?                      // CBSE school code
   address       String
   city          String
+  district      String?
   state         String
   pincode       String
   phone         String?
@@ -102,6 +105,10 @@ model School {
   teacherCount  Int        @default(0)
   isGovt        Boolean    @default(false)
   logoUrl       String?
+  primaryColor  String?    @default("#7C3AED") // brand color for subdomain
+  isActive      Boolean    @default(false)     // true when school is a paying customer
+  onboardedAt   DateTime?                      // when they became a customer
+  source        String     @default("cbse")    // cbse, udise, gbp, manual
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
@@ -119,6 +126,8 @@ model School {
   @@index([board])
   @@index([type])
   @@index([udiseCode])
+  @@index([slug])
+  @@index([district, state])
 }
 
 model SchoolClass {

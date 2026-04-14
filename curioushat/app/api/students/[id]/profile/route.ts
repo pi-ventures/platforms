@@ -22,7 +22,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   // Get attendance summary
   const allAttendance = await prisma.attendance.findMany({ where: { studentId: student.id } })
   const totalDays = allAttendance.length
-  const presentDays = allAttendance.filter(a => a.status === 'PRESENT').length
+  const presentDays = allAttendance.filter((a: any) => a.status === 'PRESENT').length
 
   return NextResponse.json({
     id: student.id,

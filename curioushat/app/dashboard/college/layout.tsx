@@ -1,10 +1,11 @@
 'use client'
 import DashboardShell from '@/components/dashboard/DashboardShell'
-import { LayoutDashboard, Users, BookOpen, BarChart3, Bell, GraduationCap, FileText, Target, Brain, TrendingUp, ClipboardList, Library } from 'lucide-react'
+import { LayoutDashboard, Users, BookOpen, BarChart3, Bell, GraduationCap, FileText, Target, Brain, TrendingUp, ClipboardList, Library, Languages } from 'lucide-react'
 
 const navItems = [
   { label: 'Overview', href: '/dashboard/college', icon: LayoutDashboard },
   { label: 'Library', href: '/dashboard/college/library', icon: Library },
+  { label: 'Learn Languages', href: '/dashboard/college/learn-languages', icon: Languages },
   { label: 'Admission Leads', href: '/dashboard/college/leads', icon: Target },
   { label: 'Applications', href: '/dashboard/college/applications', icon: FileText },
   { label: 'Batches & Classes', href: '/dashboard/college/batches', icon: Users },

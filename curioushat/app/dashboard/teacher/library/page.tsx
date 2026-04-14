@@ -1,11 +1,46 @@
 'use client'
 import { useState, useMemo } from 'react'
 import { Search, BookOpen, Upload, Download, Share2, Trash2, FileText, FileEdit, Film, Link, Plus, X, Eye, SlidersHorizontal, LayoutGrid, List, ChevronRight, Brain, Headphones, Sparkles, Languages } from 'lucide-react'
-import AITutorPanel, { type Book as TutorBook } from '@/components/dashboard/AITutorPanel'
-import AudioBookPlayer from '@/components/dashboard/AudioBookPlayer'
+import dynamic from 'next/dynamic'
+import type { Book as TutorBook } from '@/components/dashboard/AITutorPanel'
+const AITutorPanel = dynamic(() => import('@/components/dashboard/AITutorPanel'), { ssr: false })
+const AudioBookPlayer = dynamic(() => import('@/components/dashboard/AudioBookPlayer'), { ssr: false })
 import { DOMAINS, BROWSE_DATA, ALL_BOOKS, RESOURCE_TYPES, CONTENT_PROVIDERS, SUBJECT_COLORS, SUBJECT_ICONS, subjectColor, LANGUAGE_ZONES } from '@/lib/library-data'
 
 const PLAN = { aiTutor: true }
+
+/* ─── Facet Section ─── */
+function FacetSection({ label, options, selected, onSelect, iconMap }: {
+  label: string; options: string[]; selected: string; onSelect: (v: string) => void
+  iconMap?: Record<string, string>
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const visible = expanded ? options : options.slice(0, 6)
+  return (
+    <div className="border-b border-gray-100 px-4 py-3">
+      <p className="text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">{label}</p>
+      <ul className="space-y-1">
+        {visible.map(opt => (
+          <li key={opt}>
+            <button onClick={() => onSelect(opt)}
+              className={`w-full flex items-center gap-2 text-xs py-0.5 text-left transition-colors rounded ${selected === opt ? 'text-violet-600 font-semibold' : 'text-gray-600 hover:text-violet-600'}`}>
+              <span className={`w-3 h-3 rounded border flex-shrink-0 flex items-center justify-center ${selected === opt ? 'bg-violet-600 border-violet-600' : 'border-gray-300'}`}>
+                {selected === opt && <span className="text-white text-[8px]">&#10003;</span>}
+              </span>
+              {iconMap?.[opt] && <span className="text-xs leading-none flex-shrink-0">{iconMap[opt]}</span>}
+              <span className="truncate">{opt}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {options.length > 6 && (
+        <button onClick={() => setExpanded(!expanded)} className="mt-1.5 text-xs text-violet-600 hover:underline">
+          {expanded ? 'Show less' : `+${options.length - 6} more`}
+        </button>
+      )}
+    </div>
+  )
+}
 
 /* ─── Browse Panel (inline) ─── */
 function BrowsePanel({ icon, label, items, itemCount, onSelect, expandedItem, onExpandItem, langMap, onLangSelect, aiTutor = false, onAiTutor, paid = false, iconMap, ...rest }: {
@@ -120,6 +155,17 @@ export default function TeacherLibraryPage() {
   const [search, setSearch] = useState('')
   const [filters, setFilters] = useState({ subject: '', level: '', language: '', board: '', type: '', provider: '' })
   const [view, setView] = useState<'grid' | 'list'>('grid')
+
+  // Teacher's uploaded materials (placeholder until backend)
+  const myMaterials: { id: string; title: string; subject: string; class: string; type: string; shared: boolean; date: string; size: string }[] = []
+
+  const fileTypeConfig: Record<string, { icon: any; color: string; bg: string }> = {
+    PDF: { icon: FileText, color: '#dc2626', bg: '#fef2f2' },
+    DOC: { icon: FileText, color: '#2563eb', bg: '#eff6ff' },
+    PPT: { icon: FileText, color: '#ea580c', bg: '#fff7ed' },
+    Video: { icon: FileText, color: '#9333ea', bg: '#faf5ff' },
+    Link: { icon: FileText, color: '#0d9488', bg: '#f0fdfa' },
+  }
   const [showFilters, setShowFilters] = useState(true)
   const [showUpload, setShowUpload] = useState(false)
   const [expandedSubject, setExpandedSubject] = useState<string | null>(null)

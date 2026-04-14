@@ -1,9 +1,11 @@
-import { CheckCircle2, X, Clock, TrendingUp, AlertCircle } from 'lucide-react'
+'use client'
+import { useState, useEffect } from 'react'
+import { CheckCircle2, X, Clock, TrendingUp, AlertCircle, Database } from 'lucide-react'
 
-const months = ['January 2026', 'February 2026', 'March 2026']
+const MOCK_MONTHS = ['January 2026', 'February 2026', 'March 2026']
 
 // 1=present, 0=absent, 2=late, null=no school
-const calData: Record<string, (number | null)[]> = {
+const MOCK_CAL_DATA: Record<string, (number | null)[]> = {
   'January 2026': [null,null,null,null,1,1,1,1,1,null,null,1,1,1,1,1,null,null,0,1,1,1,1,null,null,1,1,1,1,1,null],
   'February 2026': [null,null,null,1,1,1,1,null,null,1,1,2,1,1,null,null,1,1,1,1,1,null,null,1,1,1,1,1,null,null,null],
   'March 2026':    [null,null,null,1,1,1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
@@ -11,15 +13,47 @@ const calData: Record<string, (number | null)[]> = {
 
 const dayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 
-const summary = [
-  { label: 'Total School Days', value: '44', icon: null },
+const MOCK_SUMMARY = [
+  { label: 'Total School Days', value: '44', icon: null as any },
   { label: 'Present', value: '41', icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
   { label: 'Absent', value: '1', icon: X, color: 'text-red-600 bg-red-50' },
   { label: 'Late', value: '2', icon: Clock, color: 'text-amber-600 bg-amber-50' },
 ]
 
 export default function ParentAttendancePage() {
-  const attendancePct = Math.round((41 / 44) * 100)
+  const [months, setMonths] = useState(MOCK_MONTHS)
+  const [calData, setCalData] = useState<Record<string, (number | null)[]>>(MOCK_CAL_DATA)
+  const [summary, setSummary] = useState(MOCK_SUMMARY)
+  const [source, setSource] = useState<'db' | 'mock'>('mock')
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const lookupRes = await fetch('/api/students/lookup?roll=1')
+        if (!lookupRes.ok) throw new Error('lookup failed')
+        const { id } = await lookupRes.json()
+        const attRes = await fetch(`/api/students/${id}/attendance`)
+        if (!attRes.ok) throw new Error('attendance fetch failed')
+        const data = await attRes.json()
+        if (data.months && data.calData && data.summary) {
+          setMonths(data.months)
+          setCalData(data.calData)
+          setSummary(data.summary)
+          setSource('db')
+        }
+      } catch {
+        // Fall back to mock data (already set as default)
+      }
+    }
+    load()
+  }, [])
+
+  const attendancePct = (() => {
+    const allDays = Object.values(calData).flat()
+    const schoolDays = allDays.filter(d => d !== null).length
+    const present = allDays.filter(d => d === 1).length
+    return schoolDays > 0 ? Math.round((present / schoolDays) * 100) : 0
+  })()
 
   return (
     <div>

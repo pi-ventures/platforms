@@ -29,7 +29,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
 
   if (!classInfo) return NextResponse.json({ error: 'Class not found' }, { status: 404 })
 
-  const students = classInfo.students.map(sc => {
+  const students = classInfo.students.map((sc: any) => {
     const s = sc.student
     const scoresByExam: Record<string, number> = {}
 
@@ -42,8 +42,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
     const examTypes = ['UT1', 'UT2', 'MID', 'UT3', 'PRE_BOARD']
     const examTotals: Record<string, number> = {}
     for (const et of examTypes) {
-      const marks = s.scores.filter(sc2 => sc2.examType === et)
-      examTotals[et] = marks.reduce((a, m) => a + m.marksObtained, 0)
+      const marks = s.scores.filter((sc2: any) => sc2.examType === et)
+      examTotals[et] = marks.reduce((a: number, m: any) => a + m.marksObtained, 0)
     }
 
     return {
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
     grade: classInfo.grade,
     section: classInfo.section,
     academicYear: year,
-    subjects: classInfo.subjects.map(s => s.subjectName),
+    subjects: classInfo.subjects.map((s: any) => s.subjectName),
     students,
   })
 }
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
     const pct = (marks / maxMarks) * 100
     const grade = pct >= 90 ? 'A+' : pct >= 80 ? 'A' : pct >= 70 ? 'B+' : pct >= 60 ? 'B' : pct >= 50 ? 'C' : pct >= 40 ? 'D' : 'F'
 
-    await prisma.score.upsert({
+    await (prisma.score as any).upsert({
       where: {
         studentId_subjectId_examType_academicYear: undefined as any, // composite not defined, use create
       },

@@ -1,12 +1,13 @@
 'use client'
 import DashboardShell from '@/components/dashboard/DashboardShell'
-import { LayoutDashboard, Map, Building2, School, BookOpen, GraduationCap, BarChart3, FileDown, AlertTriangle } from 'lucide-react'
+import { LayoutDashboard, Map, Building2, School, BookOpen, GraduationCap, BarChart3, FileDown, AlertTriangle, Languages } from 'lucide-react'
 
 const navItems = [
   { label: 'State Overview', href: '/dashboard/govt', icon: LayoutDashboard },
   { label: 'District Performance', href: '/dashboard/govt/districts', icon: Map },
   { label: 'School Performance', href: '/dashboard/govt/schools', icon: School },
   { label: 'Subject Analysis', href: '/dashboard/govt/subjects', icon: BookOpen },
+  { label: 'Learn Languages', href: '/dashboard/govt/learn-languages', icon: Languages },
   { label: 'Student Insights', href: '/dashboard/govt/students', icon: GraduationCap },
   { label: 'Reports & Export', href: '/dashboard/govt/reports', icon: FileDown },
   { label: 'Alerts & Flags', href: '/dashboard/govt/alerts', icon: AlertTriangle },

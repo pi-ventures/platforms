@@ -1,6 +1,8 @@
-import { CheckCircle2, Clock, DollarSign, Download } from 'lucide-react'
+'use client'
+import { useState, useEffect } from 'react'
+import { CheckCircle2, Clock, DollarSign, Download, Database } from 'lucide-react'
 
-const feeSchedule = [
+const MOCK_FEE_SCHEDULE = [
   { installment: 'Term 1 (April)', amount: 18500, dueDate: 'Apr 10, 2025', status: 'paid', paidOn: 'Apr 5, 2025', txnId: 'TXN202504050001' },
   { installment: 'Term 2 (July)', amount: 18500, dueDate: 'Jul 10, 2025', status: 'paid', paidOn: 'Jul 8, 2025', txnId: 'TXN202507080023' },
   { installment: 'Term 3 (October)', amount: 18500, dueDate: 'Oct 10, 2025', status: 'paid', paidOn: 'Oct 7, 2025', txnId: 'TXN202510070011' },
@@ -9,11 +11,34 @@ const feeSchedule = [
   { installment: 'Mar Miscellaneous', amount: 2000, dueDate: 'Mar 15, 2026', status: 'due', paidOn: null, txnId: null },
 ]
 
-const total = feeSchedule.reduce((acc, f) => acc + f.amount, 0)
-const paid = feeSchedule.filter(f => f.status === 'paid').reduce((acc, f) => acc + f.amount, 0)
-const due = total - paid
-
 export default function FeesPage() {
+  const [feeSchedule, setFeeSchedule] = useState(MOCK_FEE_SCHEDULE)
+  const [source, setSource] = useState<'db' | 'mock'>('mock')
+
+  useEffect(() => {
+    async function load() {
+      try {
+        // schoolId=1 as default — in prod this comes from auth context
+        const res = await fetch('/api/fees/school/1')
+        if (!res.ok) throw new Error('fees fetch failed')
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          setFeeSchedule(data)
+          setSource('db')
+        } else if (data.fees && Array.isArray(data.fees) && data.fees.length > 0) {
+          setFeeSchedule(data.fees)
+          setSource('db')
+        }
+      } catch {
+        // Fall back to mock data (already set as default)
+      }
+    }
+    load()
+  }, [])
+
+  const total = feeSchedule.reduce((acc, f) => acc + f.amount, 0)
+  const paid = feeSchedule.filter(f => f.status === 'paid').reduce((acc, f) => acc + f.amount, 0)
+  const due = total - paid
   return (
     <div>
       <div className="mb-6">

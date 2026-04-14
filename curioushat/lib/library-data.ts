@@ -11,33 +11,58 @@ export const DOMAINS = ['School Education', 'Higher Education', 'Govt Job Prep',
 export const LANGUAGE_ZONES = {
   'Indian Languages': {
     emoji: '🇮🇳',
-    desc: '10 most spoken Indian languages',
-    languages: ['Hindi', 'Bengali', 'Marathi', 'Telugu', 'Tamil', 'Gujarati', 'Kannada', 'Malayalam', 'Punjabi', 'Odia'],
+    desc: '18 Indian languages',
+    languages: ['Hindi', 'Bengali', 'Marathi', 'Telugu', 'Tamil', 'Gujarati', 'Kannada', 'Malayalam', 'Punjabi', 'Odia', 'Urdu', 'Assamese', 'Nepali', 'Sanskrit', 'Maithili', 'Santali', 'Sindhi', 'Bodo'],
+  },
+  'South Asian': {
+    emoji: '🌏',
+    desc: 'South Asian languages',
+    languages: ['Sinhala', 'Pashto'],
   },
   'Global': {
     emoji: '🌐',
     desc: 'Universal language',
     languages: ['English'],
   },
-  'Europe': {
+  'Western Europe': {
     emoji: '🇪🇺',
-    desc: 'European languages',
-    languages: ['French', 'Spanish', 'German', 'Portuguese', 'Russian', 'Italian', 'Polish', 'Ukrainian', 'Romanian', 'Dutch', 'Greek', 'Swedish'],
+    desc: 'Western European languages',
+    languages: ['French', 'Spanish', 'German', 'Portuguese', 'Italian', 'Dutch', 'Catalan', 'Greek', 'Basque', 'Welsh', 'Irish', 'Maori'],
+  },
+  'Scandinavia': {
+    emoji: '🇸🇪',
+    desc: 'Scandinavian languages',
+    languages: ['Swedish', 'Norwegian', 'Danish', 'Finnish'],
+  },
+  'Eastern Europe': {
+    emoji: '🇵🇱',
+    desc: 'Eastern European languages',
+    languages: ['Russian', 'Polish', 'Ukrainian', 'Czech', 'Hungarian', 'Romanian', 'Bulgarian', 'Croatian', 'Serbian', 'Slovak', 'Slovenian', 'Lithuanian', 'Latvian', 'Estonian'],
+  },
+  'Caucasus': {
+    emoji: '🏔️',
+    desc: 'Caucasus languages',
+    languages: ['Georgian', 'Armenian', 'Azerbaijani'],
   },
   'East & Southeast Asia': {
     emoji: '🌏',
     desc: 'Asian languages',
-    languages: ['Mandarin Chinese', 'Japanese', 'Korean', 'Vietnamese', 'Thai', 'Indonesian', 'Malay'],
+    languages: ['Mandarin Chinese', 'Japanese', 'Korean', 'Vietnamese', 'Thai', 'Indonesian', 'Malay', 'Filipino', 'Cebuano', 'Burmese', 'Khmer', 'Lao'],
   },
-  'Middle East & Central Asia': {
+  'Middle East': {
     emoji: '🕌',
-    desc: 'Middle Eastern & Central Asian languages',
+    desc: 'Middle Eastern languages',
     languages: ['Arabic', 'Turkish', 'Persian (Farsi)', 'Hebrew'],
+  },
+  'Central Asia': {
+    emoji: '🏜️',
+    desc: 'Central Asian languages',
+    languages: ['Uzbek', 'Kazakh', 'Mongolian'],
   },
   'Africa': {
     emoji: '🌍',
     desc: 'African languages',
-    languages: ['Swahili'],
+    languages: ['Swahili', 'Amharic', 'Yoruba', 'Afrikaans'],
   },
 } as const
 

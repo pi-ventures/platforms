@@ -28,14 +28,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   })
 
   const total = records.length
-  const present = records.filter(r => r.status === 'PRESENT').length
-  const absent = records.filter(r => r.status === 'ABSENT').length
-  const late = records.filter(r => r.status === 'LATE').length
+  const present = records.filter((r: any) => r.status === 'PRESENT').length
+  const absent = records.filter((r: any) => r.status === 'ABSENT').length
+  const late = records.filter((r: any) => r.status === 'LATE').length
   const pct = total > 0 ? Math.round((present / total) * 1000) / 10 : 0
 
   return NextResponse.json({
     studentId: student.id,
     summary: { total, present, absent, late, percentage: pct },
-    records: records.map(r => ({ date: r.date, status: r.status, remarks: r.remarks })),
+    records: records.map((r: any) => ({ date: r.date, status: r.status, remarks: r.remarks })),
   })
 }

@@ -37,7 +37,7 @@ export default function CollegeLibraryPage() {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <BookOpen className="w-6 h-6 text-violet-600" />
-          <h1 className="text-2xl font-bold text-gray-900">Institute Library</h1>
+          <h1 className="text-2xl font-black text-gray-900">Institute Library</h1>
         </div>
         <p className="text-sm text-gray-500">Shared library across your institute — assign books to batches, track student reading</p>
       </div>
@@ -60,8 +60,8 @@ export default function CollegeLibraryPage() {
           <button
             key={d}
             onClick={() => setActiveDomain(d)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-              activeDomain === d ? 'bg-violet-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              activeDomain === d ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             {d}
@@ -84,7 +84,7 @@ export default function CollegeLibraryPage() {
       <p className="text-xs text-gray-400">{filtered.length} books found</p>
 
       {/* Book Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {filtered.map(book => (
           <div key={book.id} className="bg-white border border-gray-200 rounded-xl p-3 hover:border-violet-200 transition-all">
             <div className="flex items-center gap-3">
@@ -93,7 +93,7 @@ export default function CollegeLibraryPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-gray-900 truncate">{book.title}</p>
-                <p className="text-[10px] text-gray-400">{book.class} · {book.board} · {book.author}</p>
+                <p className="text-xs text-gray-400">{book.class} · {book.board} · {book.author}</p>
               </div>
             </div>
             <div className="mt-2 flex items-center justify-between">
@@ -101,10 +101,10 @@ export default function CollegeLibraryPage() {
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: subjectColor(book.subject) + '15', color: subjectColor(book.subject) }}>
                   {book.subject}
                 </span>
-                <span className="text-[10px] text-gray-300">{book.pages}p</span>
+                <span className="text-[10px] text-gray-400">{book.pages}p</span>
               </div>
             </div>
-            <p className="text-[9px] text-gray-300 mt-1">Interpreted by CuriousHat AI</p>
+            <p className="text-[9px] text-violet-500 mt-1">Interpreted by CuriousHat AI</p>
             <div className="mt-2 flex gap-2">
               <button className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-violet-600 bg-violet-50 rounded-lg hover:bg-violet-100 transition-colors">
                 <Users className="w-3 h-3" /> Assign to Batch

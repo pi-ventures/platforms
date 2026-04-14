@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const dynamic = 'force-dynamic'
 
 // Some language codes need alternate forms for Google TTS
 const TTS_CODE_MAP: Record<string, string[]> = {
