@@ -1,8 +1,9 @@
 import { Brain, Library, BarChart3, Users } from 'lucide-react'
+import { LANGUAGE_COUNT } from '@/lib/languages'
 
 const individualFeatures = [
   { icon: Brain, title: 'AI Tutoring', desc: 'Snap a photo of any question — Claude Vision or GPT-4o explains it step-by-step with real-world context.' },
-  { icon: Library, title: 'Digital Library', desc: 'Browse NCERT textbooks, reference books, music, fashion design courses — across all classes, 98 languages, with accredited certifications.' },
+  { icon: Library, title: 'Digital Library', desc: `Browse NCERT textbooks, reference books, music, fashion design courses — across all classes, ${LANGUAGE_COUNT} languages, with accredited certifications.` },
   { icon: BarChart3, title: 'Progress Tracking', desc: 'Students and parents get real-time visibility into grades, attendance, assignments, and improvement trends.' },
   { icon: Users, title: 'Parent Portal', desc: "Track your child's performance, attendance, fees, and directly communicate with subject teachers." },
 ]

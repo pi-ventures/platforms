@@ -3,6 +3,7 @@ import Navbar from '@/components/marketing/Navbar'
 import Footer from '@/components/marketing/Footer'
 import Link from 'next/link'
 import { Sparkles, ArrowRight } from 'lucide-react'
+import { LANGUAGE_COUNT, LANGUAGE_STAT_LABEL } from '@/lib/languages'
 
 /* ── Below-fold sections ── */
 /* SSR: keep key content sections crawlable for SEO */
@@ -21,7 +22,7 @@ const stats = [
   { value: '50K+', label: 'Students Enrolled' },
   { value: '2,000+', label: 'Teachers Using AI' },
   { value: '500+', label: 'Schools Onboarded' },
-  { value: '98', label: 'Languages (24 Indian + 74 International)' },
+  { value: String(LANGUAGE_COUNT), label: LANGUAGE_STAT_LABEL },
 ]
 
 export default function HomePage() {

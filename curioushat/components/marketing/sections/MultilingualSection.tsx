@@ -1,3 +1,5 @@
+import { LANGUAGE_COUNT, INDIAN_LANGUAGE_COUNT, INTERNATIONAL_LANGUAGE_COUNT, REGION_COUNT } from '@/lib/languages'
+
 export default function MultilingualSection() {
   return (
     <section className="py-12 md:py-20 bg-white">
@@ -6,22 +8,22 @@ export default function MultilingualSection() {
           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full mb-3">
             Only Platform
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-3">98 Languages. Accredited Certifications.</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-3">{LANGUAGE_COUNT} Languages. Accredited Certifications.</h2>
           <p className="text-gray-500 text-sm max-w-2xl mx-auto leading-relaxed">
-            The only EdTech platform supporting 24 Indian languages + 74 international languages across 12 regions with accredited certifications — issued through <span className="text-violet-600 font-semibold">Gurukul Global Vidyaniketan</span> (Gurukul.foundation) — from DELF, Goethe, JLPT, HSK, TOPIK, DELE, Trinity College London, NIFT, and more.
+            The only EdTech platform supporting {INDIAN_LANGUAGE_COUNT} Indian languages + {INTERNATIONAL_LANGUAGE_COUNT} international languages across {REGION_COUNT} regions with accredited certifications — issued through <span className="text-violet-600 font-semibold">Gurukul Global Vidyaniketan</span> (Gurukul.foundation) — from DELF, Goethe, JLPT, HSK, TOPIK, DELE, Trinity College London, NIFT, and more.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6">
             <div className="text-3xl mb-3">&#127757;</div>
-            <h3 className="font-bold text-gray-900 mb-2">98 Languages</h3>
-            <p className="text-sm text-gray-500 mb-4 leading-relaxed">All 24 Indian languages including Bhojpuri, Santali, Bodo + 74 international across Europe, Middle East, East Asia, Southeast Asia, Africa, Caucasus — with AI tutoring in each.</p>
+            <h3 className="font-bold text-gray-900 mb-2">{LANGUAGE_COUNT} Languages</h3>
+            <p className="text-sm text-gray-500 mb-4 leading-relaxed">All {INDIAN_LANGUAGE_COUNT} Indian languages including Bhojpuri, Santali, Bodo + {INTERNATIONAL_LANGUAGE_COUNT} international across Europe, Middle East, East Asia, Southeast Asia, Africa, Caucasus — with AI tutoring in each.</p>
             <div className="flex flex-wrap gap-1">
               {['&#127467;&#127479;','&#127466;&#127480;','&#127465;&#127466;','&#127464;&#127475;','&#127471;&#127477;','&#127472;&#127479;','&#127480;&#127462;','&#127463;&#127479;','&#127479;&#127482;','&#127470;&#127481;'].map((f, i) => (
                 <span key={i} className="text-lg" dangerouslySetInnerHTML={{ __html: f }} />
               ))}
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium self-center ml-1">+88 more</span>
+              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium self-center ml-1">+{LANGUAGE_COUNT - 10} more</span>
             </div>
           </div>
           <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 rounded-2xl p-6">
