@@ -2,8 +2,22 @@ import Anthropic from '@anthropic-ai/sdk'
 import OpenAI from 'openai'
 import { NextRequest, NextResponse } from 'next/server'
 
-const anthropicClient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+let _anthropicClient: Anthropic | null = null
+let _openaiClient: OpenAI | null = null
+
+function getAnthropicClient() {
+  if (!_anthropicClient) {
+    _anthropicClient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 60_000, maxRetries: 2 })
+  }
+  return _anthropicClient
+}
+
+function getOpenAIClient() {
+  if (!_openaiClient) {
+    _openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 60_000, maxRetries: 2 })
+  }
+  return _openaiClient
+}
 
 const SYSTEM_PROMPT = `You are an expert AI tutor for Indian school students (Classes 6–12, CBSE/ICSE boards).
 Your job is to explain any concept, solve any problem, and connect learning to the real world.
@@ -54,7 +68,7 @@ async function callClaude(image: string | null, mimeType: string | null, questio
 
   content.push({ type: 'text', text: question })
 
-  const message = await anthropicClient.messages.create({
+  const message = await getAnthropicClient().messages.create({
     model: 'claude-opus-4-5-20251101',
     max_tokens: 1500,
     system: SYSTEM_PROMPT,
@@ -112,7 +126,7 @@ async function callOpenAI(image: string | null, question: string): Promise<strin
 
   userContent.push({ type: 'text', text: question })
 
-  const response = await openaiClient.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o',
     max_tokens: 1500,
     messages: [
@@ -125,16 +139,23 @@ async function callOpenAI(image: string | null, question: string): Promise<strin
 }
 
 function parseResponse(rawText: string) {
-  // Strip any accidental markdown fences the model might add
-  const jsonText = rawText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
-  try {
-    return JSON.parse(jsonText)
-  } catch {
-    return {
-      answer: rawText,
-      explanation: ['The AI returned a response but it was not in the expected format. See the answer above.'],
-      applications: [],
-    }
+  // Robust JSON extraction — handles fences, extra text before/after JSON
+  const fenceMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/)
+  const candidate = fenceMatch ? fenceMatch[1].trim() : rawText.trim()
+
+  // Try direct parse first
+  try { return JSON.parse(candidate) } catch {}
+
+  // Fallback: extract first JSON object from the text
+  const braceMatch = candidate.match(/\{[\s\S]*\}/)
+  if (braceMatch) {
+    try { return JSON.parse(braceMatch[0]) } catch {}
+  }
+
+  return {
+    answer: rawText,
+    explanation: ['The AI returned a response but it was not in the expected format. See the answer above.'],
+    applications: [],
   }
 }
 
@@ -175,6 +196,18 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('AI Tutor error:', error)
+
+    // Distinguish error types for better debugging and user feedback
+    if (error?.status === 429) {
+      return NextResponse.json({ error: 'Rate limit exceeded. Please wait a moment and try again.' }, { status: 429 })
+    }
+    if (error?.status === 401) {
+      return NextResponse.json({ error: 'API key is invalid or expired. Check your .env.local configuration.' }, { status: 500 })
+    }
+    if (error?.code === 'ETIMEDOUT' || error?.message?.includes('timeout')) {
+      return NextResponse.json({ error: 'Request timed out. Try a simpler question or shorter image.' }, { status: 504 })
+    }
+
     const message = error?.message || 'An unexpected error occurred'
     return NextResponse.json({ error: message }, { status: 500 })
   }
