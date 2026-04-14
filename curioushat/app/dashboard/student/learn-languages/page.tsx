@@ -2,51 +2,34 @@
 import { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { Languages, Mic, MicOff, Volume2, Sparkles, Copy, Check, ChevronDown, ArrowLeftRight, Globe, BookOpen, Brain, Type, Hash, Lightbulb, Star, Download, HardDrive, Wifi, WifiOff, Trash2, RefreshCw, CheckCircle2 } from 'lucide-react'
 import { LANGUAGE_ZONES } from '@/lib/library-data'
+import { LANGUAGES, LANGUAGE_COUNT } from '@/lib/languages'
 
-/* ── Language metadata with Google Translate codes ── */
-const LANG_META: Record<string, { code: string; flag: string; native: string; script?: string }> = {
-  // Indian
-  Hindi:       { code: 'hi', flag: '🇮🇳', native: 'हिन्दी',     script: 'Devanagari' },
-  Bengali:     { code: 'bn', flag: '🇮🇳', native: 'বাংলা',       script: 'Bangla' },
-  Marathi:     { code: 'mr', flag: '🇮🇳', native: 'मराठी',       script: 'Devanagari' },
-  Telugu:      { code: 'te', flag: '🇮🇳', native: 'తెలుగు',      script: 'Telugu' },
-  Tamil:       { code: 'ta', flag: '🇮🇳', native: 'தமிழ்',       script: 'Tamil' },
-  Gujarati:    { code: 'gu', flag: '🇮🇳', native: 'ગુજરાતી',     script: 'Gujarati' },
-  Kannada:     { code: 'kn', flag: '🇮🇳', native: 'ಕನ್ನಡ',       script: 'Kannada' },
-  Malayalam:   { code: 'ml', flag: '🇮🇳', native: 'മലയാളം',      script: 'Malayalam' },
-  Punjabi:     { code: 'pa', flag: '🇮🇳', native: 'ਪੰਜਾਬੀ',      script: 'Gurmukhi' },
-  Odia:        { code: 'or', flag: '🇮🇳', native: 'ଓଡ଼ିଆ',       script: 'Odia' },
-  // Global
-  English:     { code: 'en', flag: '🌐', native: 'English' },
-  // Europe
-  French:      { code: 'fr', flag: '🇫🇷', native: 'Français' },
-  Spanish:     { code: 'es', flag: '🇪🇸', native: 'Español' },
-  German:      { code: 'de', flag: '🇩🇪', native: 'Deutsch' },
-  Portuguese:  { code: 'pt', flag: '🇧🇷', native: 'Português' },
-  Russian:     { code: 'ru', flag: '🇷🇺', native: 'Русский',     script: 'Cyrillic' },
-  Italian:     { code: 'it', flag: '🇮🇹', native: 'Italiano' },
-  Polish:      { code: 'pl', flag: '🇵🇱', native: 'Polski' },
-  Ukrainian:   { code: 'uk', flag: '🇺🇦', native: 'Українська',  script: 'Cyrillic' },
-  Romanian:    { code: 'ro', flag: '🇷🇴', native: 'Română' },
-  Dutch:       { code: 'nl', flag: '🇳🇱', native: 'Nederlands' },
-  Greek:       { code: 'el', flag: '🇬🇷', native: 'Ελληνικά',    script: 'Greek' },
-  Swedish:     { code: 'sv', flag: '🇸🇪', native: 'Svenska' },
-  // East & SE Asia
-  'Mandarin Chinese': { code: 'zh-CN', flag: '🇨🇳', native: '中文',      script: 'Hanzi' },
-  Japanese:    { code: 'ja', flag: '🇯🇵', native: '日本語',       script: 'Kanji/Kana' },
-  Korean:      { code: 'ko', flag: '🇰🇷', native: '한국어',       script: 'Hangul' },
-  Vietnamese:  { code: 'vi', flag: '🇻🇳', native: 'Tiếng Việt' },
-  Thai:        { code: 'th', flag: '🇹🇭', native: 'ไทย',         script: 'Thai' },
-  Indonesian:  { code: 'id', flag: '🇮🇩', native: 'Bahasa Indonesia' },
-  Malay:       { code: 'ms', flag: '🇲🇾', native: 'Bahasa Melayu' },
-  // Middle East & Central Asia
-  Arabic:      { code: 'ar', flag: '🇸🇦', native: 'العربية',      script: 'Arabic' },
-  Turkish:     { code: 'tr', flag: '🇹🇷', native: 'Türkçe' },
-  'Persian (Farsi)': { code: 'fa', flag: '🇮🇷', native: 'فارسی',  script: 'Persian' },
-  Hebrew:      { code: 'he', flag: '🇮🇱', native: 'עברית',        script: 'Hebrew' },
-  // Africa
-  Swahili:     { code: 'sw', flag: '🇰🇪', native: 'Kiswahili' },
+/* ── Language metadata — auto-generated from lib/languages.ts registry ── */
+const REGION_FLAGS: Record<string, string> = {
+  indian: '🇮🇳', south_asian: '🌏', western_europe: '🇪🇺', eastern_europe: '🇵🇱',
+  scandinavia: '🇸🇪', middle_east: '🕌', east_asia: '🌏', southeast_asia: '🌏',
+  central_asia: '🏜️', africa: '🌍', caucasus: '🏔️', balkans: '🇪🇺',
 }
+
+// Build LANG_META from the canonical LANGUAGES registry (98 languages)
+// Map display names used in LANGUAGE_ZONES to registry keys
+const DISPLAY_NAME_MAP: Record<string, string> = {
+  'Mandarin Chinese': 'chinese_simplified',
+  'Persian (Farsi)': 'persian',
+}
+
+const LANG_META: Record<string, { code: string; flag: string; native: string; script?: string }> = {}
+for (const [key, lang] of Object.entries(LANGUAGES)) {
+  LANG_META[lang.name] = {
+    code: lang.googleCode,
+    flag: REGION_FLAGS[lang.region] || '🌐',
+    native: lang.nativeName,
+    script: lang.script !== 'Latin' ? lang.script : undefined,
+  }
+}
+// Add display name aliases used in LANGUAGE_ZONES
+LANG_META['Mandarin Chinese'] = LANG_META['Chinese (Simplified)']
+LANG_META['Persian (Farsi)'] = LANG_META['Persian']
 
 const ZONE_TABS = Object.keys(LANGUAGE_ZONES)
 type ZoneKey = keyof typeof LANGUAGE_ZONES
@@ -840,7 +823,7 @@ export default function TranslatorPage() {
     if (!text.trim()) return
     const encoded = encodeURIComponent(text.slice(0, 200))
 
-    // Always use our server TTS proxy — guaranteed to work for all 35 languages,
+    // Always use our server TTS proxy — guaranteed to work for all 98 languages,
     // no voice installation needed, works on every device from first click
     const audio = new Audio(`/api/tts?lang=${langCode}&text=${encoded}`)
     audio.play().catch(() => {
@@ -872,7 +855,7 @@ export default function TranslatorPage() {
           </div>
           <div>
             <h1 className="text-2xl font-black text-gray-900">Learn Languages</h1>
-            <p className="text-gray-500 text-sm">Learn &amp; translate across 35 languages — works offline with language packs</p>
+            <p className="text-gray-500 text-sm">Learn &amp; translate across 98 languages — works offline with language packs</p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -986,7 +969,7 @@ export default function TranslatorPage() {
               }
             }} disabled={!isOnline || !!downloadingLang}
               className="text-[10px] font-semibold text-violet-600 hover:underline disabled:opacity-40 disabled:no-underline">
-              Download all 35 languages
+              Download all 98 languages
             </button>
           </div>
         </div>
@@ -1035,7 +1018,7 @@ export default function TranslatorPage() {
             )}
           </div>
           <ArrowLeftRight className="w-4 h-4 text-gray-300" />
-          <span className="text-xs font-bold text-violet-600 uppercase tracking-wide bg-violet-100 px-2 py-0.5 rounded-full">All 35 languages</span>
+          <span className="text-xs font-bold text-violet-600 uppercase tracking-wide bg-violet-100 px-2 py-0.5 rounded-full">All 98 languages</span>
         </div>
 
         {/* Text input */}
@@ -1067,7 +1050,7 @@ export default function TranslatorPage() {
             Speak
           </button>
 
-          <button onClick={translate} disabled={!inputText.trim() || isTranslating}
+          <button onClick={() => translate()} disabled={!inputText.trim() || isTranslating}
             className="flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md hover:shadow-lg disabled:opacity-40 disabled:pointer-events-none transition-all">
             <Sparkles className="w-3.5 h-3.5" />
             {isTranslating ? 'Translating…' : 'Translate'}
@@ -1114,7 +1097,7 @@ export default function TranslatorPage() {
               <span className="text-lg">📖</span>
               <div>
                 <h3 className="font-black text-gray-900 text-sm">Level 1 — Beginner ({TOTAL_WORDS} Words)</h3>
-                <p className="text-[10px] text-gray-500">Tap any chapter, then tap a word to translate it to all 35 languages</p>
+                <p className="text-[10px] text-gray-500">Tap any chapter, then tap a word to translate it to all 98 languages</p>
               </div>
             </div>
           </div>
@@ -1166,7 +1149,7 @@ export default function TranslatorPage() {
               <span className="text-lg">📚</span>
               <div>
                 <h3 className="font-black text-gray-900 text-sm">Level 2 — Language Book Sentences</h3>
-                <p className="text-[10px] text-gray-500">Tap a language → load sentences from its course book → translate to all 35 languages</p>
+                <p className="text-[10px] text-gray-500">Tap a language → load sentences from its course book → translate to all 98 languages</p>
               </div>
             </div>
           </div>
@@ -1226,7 +1209,7 @@ export default function TranslatorPage() {
               <span className="text-lg">🔗</span>
               <div>
                 <h3 className="font-black text-gray-900 text-sm">Level 3 — Subject Vocabulary</h3>
-                <p className="text-[10px] text-gray-500">Tap a subject → load key terms → translate to all 35 languages</p>
+                <p className="text-[10px] text-gray-500">Tap a subject → load key terms → translate to all 98 languages</p>
               </div>
             </div>
           </div>
@@ -1314,7 +1297,7 @@ export default function TranslatorPage() {
             <div className="text-center py-16 text-gray-400">
               <Languages className="w-12 h-12 mx-auto mb-3 opacity-30" />
               <p className="text-sm font-medium text-gray-500">No translations yet</p>
-              <p className="text-xs text-gray-400 mt-1">Enter text above and click <span className="text-violet-600 font-semibold">Translate</span> to see results in all 35 languages</p>
+              <p className="text-xs text-gray-400 mt-1">Enter text above and click <span className="text-violet-600 font-semibold">Translate</span> to see results in all 98 languages</p>
             </div>
           ) : isTranslating ? (
             <div className="text-center py-16">
